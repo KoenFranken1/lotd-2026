@@ -1,0 +1,2379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Left of the Dial 2026 — Your Schedule</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #14120F;
+    --bg-raised: #1C1913;
+    --paper: #F1E9D8;
+    --paper-dim: #B8AF9C;
+    --line: #38332A;
+    --accent: #E8B93E;
+    --accent-ink: #14120F;
+    --wed: #8B7FC7;
+    --thu: #4E9788;
+    --fri: #E8B93E;
+    --sat: #D2593A;
+    --danger: #F0472D;
+    --success: #5CAB63;
+    --danger-wash: rgba(240, 71, 45, 0.15);
+    --accent-wash: rgba(232, 185, 62, 0.22);
+    --paper-mid: #C9C0AC;
+    --radius: 3px;
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  :root:not([data-theme="light"]) { color-scheme: dark; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #F1E9D8;
+      --bg-raised: #E8DFC9;
+      --paper: #201C15;
+      --paper-dim: #6B6250;
+      --line: #D8CCAE;
+      --accent-ink: #F1E9D8;
+      --paper-mid: #5C543F;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #F1E9D8;
+    --bg-raised: #E8DFC9;
+    --paper: #201C15;
+    --paper-dim: #6B6250;
+    --line: #D8CCAE;
+    --accent-ink: #F1E9D8;
+    --paper-mid: #5C543F;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--paper);
+    height: 100%;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    min-height: 100%;
+  }
+
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 18px 60px; }
+
+  header.hero {
+    padding: 28px 0 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .kicker {
+    font-size: 13px;
+    color: var(--paper-dim);
+    margin: 0 0 6px;
+    letter-spacing: 0.02em;
+  }
+  .header-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .icon-btn {
+    font-family: inherit;
+    font-size: 13px;
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--paper-dim);
+    border-radius: var(--radius);
+    padding: 6px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 32px;
+  }
+  .icon-btn:hover { color: var(--paper); border-color: var(--paper-dim); }
+  .icon-btn-label { font-size: 12px; font-weight: 600; }
+  h1 {
+    font-size: clamp(28px, 7vw, 42px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    margin: 0 0 10px;
+  }
+  .hero-sub {
+    color: var(--paper-dim);
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  nav.main-tabs {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 6;
+    display: flex;
+    gap: 6px;
+    padding: 14px 0 0;
+    background: var(--bg);
+  }
+  .main-tab {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--paper);
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 9px 14px;
+    cursor: pointer;
+    flex: 1 1 0;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .main-tab .n {
+    background: var(--bg);
+    color: var(--paper-dim);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+  .main-tab.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .main-tab.active .n { background: var(--accent-ink); color: var(--accent); }
+
+  nav.days {
+    position: sticky;
+    top: calc(env(safe-area-inset-top, 0px) + 49px);
+    z-index: 5;
+    display: flex;
+    gap: 6px;
+    padding: 12px 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+  }
+  .day-btn {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--paper);
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .day-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .day-btn.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .day-btn.active .day-dot { box-shadow: 0 0 0 2px var(--accent-ink); }
+  .day-btn .count { color: var(--paper-dim); font-weight: 400; }
+  .day-btn.active .count { color: var(--accent-ink); opacity: 0.7; }
+
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    padding: 14px 0;
+    flex-wrap: wrap;
+  }
+  input[type="search"] {
+    flex: 1 1 200px;
+    font-family: inherit;
+    font-size: 14px;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    color: var(--paper);
+    border-radius: var(--radius);
+    padding: 9px 12px;
+  }
+  input[type="search"]::placeholder { color: var(--paper-dim); }
+  select {
+    font-family: inherit;
+    font-size: 14px;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    color: var(--paper);
+    border-radius: var(--radius);
+    padding: 9px 10px;
+  }
+
+  .list { margin-top: 8px; }
+  .row {
+    display: grid;
+    grid-template-columns: 56px 1fr 44px;
+    gap: 12px;
+    align-items: start;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+    border-left: 3px solid transparent;
+    padding-left: 10px;
+    cursor: pointer;
+  }
+  .row.starred { border-left-color: var(--success); }
+  .row.clash { border-left-color: var(--danger); }
+  .time { font-weight: 700; font-size: 15px; padding-top: 12px; font-variant-numeric: tabular-nums; }
+  .info { padding: 4px 0; }
+  .info .name-line { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .name { font-weight: 600; font-size: 16px; }
+
+  .venue-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--paper-dim);
+    margin-top: 4px;
+  }
+  .venue-pin { flex-shrink: 0; }
+  .venue-name { color: var(--paper); font-weight: 500; }
+  .venue-num-tag { color: var(--paper-dim); }
+  .venue-sep { color: var(--line); }
+  .cap-badge-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--paper-dim);
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1px 8px;
+  }
+
+  .genre-line { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin-top: 6px; }
+  .genre-pill {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--paper-dim);
+    background: var(--bg-raised);
+    border-radius: 10px;
+    padding: 2px 8px;
+  }
+  .show-count { font-size: 12px; color: var(--paper-dim); font-style: italic; }
+
+  .fans { font-size: 13px; margin-top: 6px; line-height: 1.5; color: var(--paper-mid); }
+  .fans b { font-weight: 600; color: var(--paper); }
+  .clash-note { font-size: 12.5px; color: var(--danger); margin-top: 6px; display: none; }
+  .row.clash .clash-note { display: block; }
+
+  .remove-pick-btn {
+    display: none;
+    margin-top: 8px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    background: none;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    border-radius: var(--radius);
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  .row.open .remove-pick-btn { display: inline-block; }
+
+  .star-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--paper-dim);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-top: 2px;
+  }
+  .row.starred .star-btn { color: var(--paper); }
+  .row.must .star-btn { color: var(--accent); font-size: 23px; }
+
+  .day-heading {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--paper-dim);
+    margin: 22px 0 4px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+  .day-heading:first-child { margin-top: 8px; }
+
+  .empty {
+    padding: 50px 10px;
+    text-align: center;
+    color: var(--paper-dim);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  footer {
+    margin-top: 30px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--paper-dim);
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .reset-btn {
+    background: none;
+    border: none;
+    color: var(--paper-dim);
+    text-decoration: underline;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12.5px;
+    padding: 0;
+  }
+
+  @media (max-width: 420px) {
+    .row { grid-template-columns: 46px 1fr 44px; gap: 9px; }
+    .main-tab { padding: 8px 8px; font-size: 12.5px; }
+    .icon-btn-label { display: none; }
+    .toolbar { gap: 7px; }
+    .clash-venue-col { width: 84px; }
+    .clash-venue-label { font-size: 10.5px; }
+  }
+
+  .venues-view { margin-top: 8px; }
+  .venue-map-wrap { overflow-x: auto; margin-bottom: 14px; }
+  .venue-map-wrap svg { display: block; width: 100%; height: auto; min-width: 320px; }
+  .venue-note { font-size: 12.5px; color: var(--paper-dim); line-height: 1.5; margin: 0 0 16px; }
+  .venue-table-wrap { overflow-x: auto; }
+  table.venue-table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+  table.venue-table th, table.venue-table td {
+    text-align: left;
+    padding: 7px 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  table.venue-table th { color: var(--paper-dim); font-weight: 600; font-size: 11.5px; white-space: nowrap; }
+  table.venue-table td.vt-num { color: var(--paper-dim); }
+  table.venue-table td.vt-name { font-weight: 600; white-space: nowrap; }
+  tr.venue-table-row { cursor: pointer; }
+  tr.venue-table-row:hover { background: var(--bg-raised); }
+
+  .venue-map .venue-node { cursor: pointer; }
+  .venue-map .venue-node:hover circle { stroke: var(--accent); }
+  .venue-map .venue-node:focus circle { stroke: var(--accent); outline: none; }
+
+  .venue-legend {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--paper-dim);
+    margin: 10px 0 16px;
+  }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .ticket-desk-dot { background: var(--accent); }
+
+  .venue-detail-hint { font-size: 13px; color: var(--paper-dim); line-height: 1.5; margin: 0 0 18px; }
+  .venue-detail {
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 18px;
+  }
+  .vd-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .vd-name-big { font-weight: 700; font-size: 16px; }
+  .vd-walk { font-size: 12.5px; color: var(--paper-dim); margin-top: 4px; }
+  .vd-acts { margin-top: 10px; display: flex; flex-direction: column; gap: 5px; }
+  .vd-act { display: flex; gap: 8px; font-size: 13px; align-items: baseline; }
+  .vd-day { color: var(--paper-dim); font-size: 11px; font-weight: 600; width: 30px; flex-shrink: 0; }
+  .vd-time { font-weight: 600; font-variant-numeric: tabular-nums; width: 40px; flex-shrink: 0; }
+  .vd-name { color: var(--paper); }
+  .vd-empty { font-size: 12.5px; color: var(--paper-dim); margin-top: 8px; }
+
+  .clash-view { margin-top: 8px; }
+  .clash-day { margin-bottom: 30px; }
+  .clash-day-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+  .clash-day-body { display: flex; }
+  .clash-venue-col { width: 108px; flex-shrink: 0; position: relative; }
+  .clash-venue-label {
+    position: absolute;
+    left: 0;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    font-size: 11.5px;
+    color: var(--paper-dim);
+    line-height: 1.25;
+  }
+  .clash-timeline-wrap { flex: 1; overflow-x: auto; }
+  .clash-timeline { position: relative; min-width: 320px; }
+  .clash-row-bg { position: absolute; left: 0; right: 0; background: var(--bg-raised); }
+  .clash-row-bg.alt { background: transparent; }
+  .clash-hourline { position: absolute; width: 1px; background: var(--line); }
+  .clash-hourlabel { position: absolute; top: 2px; font-size: 10px; color: var(--paper-dim); transform: translateX(3px); }
+  .clash-band { position: absolute; background: var(--danger-wash); pointer-events: none; }
+  .clash-block {
+    position: absolute;
+    border-radius: 3px;
+    background: var(--bg-raised);
+    border: 1.5px solid var(--success);
+    padding: 3px 6px;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.2;
+  }
+  .clash-block.must { background: var(--accent-wash); border-width: 2.5px; }
+  .clash-block.clash { border-color: var(--danger); }
+  .clash-block.selected { box-shadow: 0 0 0 2px var(--paper); }
+  .clash-block .cb-time { font-size: 10px; font-weight: 700; color: var(--success); white-space: nowrap; }
+  .clash-block.clash .cb-time { color: var(--danger); }
+  .clash-block .cb-name { font-size: 11.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .clash-note { font-size: 12.5px; color: var(--paper-dim); line-height: 1.5; margin: 0 0 16px; }
+
+  .clash-popover {
+    position: fixed;
+    z-index: 50;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    width: min(340px, calc(100vw - 32px));
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  }
+  .clash-popover[hidden] { display: none; }
+  .clash-popover-close {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 28px;
+    height: 28px;
+    background: none;
+    border: none;
+    color: var(--paper-dim);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .cd-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-right: 20px; }
+  .cd-name-big { font-weight: 700; font-size: 16px; }
+  .cd-meta { font-size: 12.5px; color: var(--paper-dim); margin-top: 4px; }
+  .cd-clash-note { font-size: 12.5px; color: var(--danger); margin-top: 8px; }
+  .cd-remove-btn {
+    margin-top: 12px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    background: none;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    border-radius: var(--radius);
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+
+  .share-view { margin-top: 8px; }
+  .share-block { margin-bottom: 22px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+  .share-block:last-child { border-bottom: none; }
+  .share-block h3 { font-size: 14px; margin: 0 0 6px; }
+  .share-note { font-size: 12.5px; color: var(--paper-dim); line-height: 1.5; margin: 0 0 12px; }
+  .share-url-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .share-url-row input[type="text"] {
+    flex: 1 1 180px;
+    min-width: 0;
+    font-family: inherit;
+    font-size: 12px;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    color: var(--paper);
+    border-radius: var(--radius);
+    padding: 9px 10px;
+  }
+  .share-copy-btn {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border: none;
+    border-radius: var(--radius);
+    padding: 9px 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* ---------- Schedule layout toggle (List / Timetable) ---------- */
+  .wrap { transition: max-width 0.2s ease; }
+  .wrap.wide { max-width: 1180px; }
+  .layout-toggle {
+    display: inline-flex;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .layout-toggle button {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--bg-raised);
+    color: var(--paper-dim);
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  .layout-toggle button + button { border-left: 1px solid var(--line); }
+  .layout-toggle button.active { background: var(--paper); color: var(--bg); }
+
+  /* ---------- Timetable grid ---------- */
+  .tt-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--paper-dim);
+    margin: 0 0 8px;
+  }
+  .tt-legend { display: flex; gap: 12px; flex-wrap: wrap; }
+  .tt-legend i {
+    display: inline-block; width: 10px; height: 10px; border-radius: 2px;
+    vertical-align: -1px; margin-right: 4px; border: 1.5px solid var(--line);
+  }
+  .tt-legend .lg-want { border-color: var(--paper); }
+  .tt-legend .lg-must { background: var(--accent); border-color: var(--accent); }
+  .tt-legend .lg-clash { border-color: var(--danger); }
+  .tt-scroll {
+    overflow: auto;
+    max-height: calc(100vh - 130px);
+    max-height: calc(100dvh - 130px);
+    min-height: 320px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg);
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tt { position: relative; }
+  .tt-head {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    display: flex;
+    background: var(--bg);
+    border-bottom: 2px solid var(--tt-day, var(--accent));
+  }
+  .tt-corner {
+    position: sticky;
+    left: 0;
+    z-index: 4;
+    flex-shrink: 0;
+    background: var(--bg);
+    border-right: 1px solid var(--line);
+  }
+  .tt-venue {
+    flex-shrink: 0;
+    padding: 8px 8px 7px;
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 2px;
+    min-height: 46px;
+  }
+  .tt-venue-name { font-size: 11.5px; font-weight: 700; line-height: 1.2; }
+  .tt-venue-num { font-size: 10px; color: var(--paper-dim); font-weight: 600; }
+  .tt-body { display: flex; position: relative; }
+  .tt-times {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    flex-shrink: 0;
+    background: var(--bg);
+    border-right: 1px solid var(--line);
+  }
+  .tt-hour {
+    position: absolute;
+    left: 0;
+    right: 6px;
+    text-align: right;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--paper-dim);
+    font-variant-numeric: tabular-nums;
+    transform: translateY(3px);
+  }
+  .tt-canvas {
+    position: relative;
+    flex-shrink: 0;
+    background-image:
+      repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px var(--tt-hour)),
+      repeating-linear-gradient(to bottom, transparent 0 calc(var(--tt-hour) / 2), rgba(127,127,127,0.12) calc(var(--tt-hour) / 2) calc(var(--tt-hour) / 2 + 1px), transparent calc(var(--tt-hour) / 2 + 1px) var(--tt-hour)),
+      repeating-linear-gradient(to right, transparent 0 calc(var(--tt-col) - 1px), var(--line) calc(var(--tt-col) - 1px) var(--tt-col));
+  }
+  .tt-block {
+    position: absolute;
+    border-radius: 3px;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--tt-day, var(--accent));
+    padding: 4px 6px;
+    overflow: hidden;
+    cursor: pointer;
+    line-height: 1.2;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.15s ease;
+  }
+  .tt-block:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,0.25); z-index: 1; }
+  .tt-block:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .tt-block .tb-time { font-size: 10px; font-weight: 700; color: var(--paper-dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tt-block .tb-name {
+    font-size: 12px; font-weight: 600;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .tt-block.picked { border: 1.5px solid var(--paper); border-left-width: 3px; }
+  .tt-block.must { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .tt-block.must .tb-time { color: var(--accent-ink); opacity: 0.75; }
+  .tt-block.clash { border-color: var(--danger); box-shadow: inset 0 0 0 1px var(--danger); }
+  .tt-block.clash .tb-time { color: var(--danger); opacity: 1; }
+  .tt-block.must.clash .tb-time { color: var(--accent-ink); }
+  .tt-block.dim { opacity: 0.22; }
+  .tt-block.dim:hover { opacity: 0.6; }
+  .tt-block.selected { box-shadow: 0 0 0 2px var(--paper); z-index: 2; }
+
+  .tp-pills { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px; }
+  .tp-fans { font-size: 12.5px; color: var(--paper-dim); margin-top: 8px; line-height: 1.45; }
+  .tp-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .tp-btn {
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--paper);
+    border-radius: var(--radius);
+    padding: 7px 12px;
+    cursor: pointer;
+  }
+  .tp-btn.active { background: var(--paper); color: var(--bg); border-color: var(--paper); }
+  .tp-btn.tp-must.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .tp-btn.tp-remove { border-color: var(--danger); color: var(--danger); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tt-block, .wrap { transition: none; }
+    .tt-block:hover { transform: none; }
+  }
+
+  /* ---------- Main tabs: short labels on phones so five tabs fit ---------- */
+  .main-tab .lbl-short { display: none; }
+  @media (max-width: 520px) {
+    .main-tab .lbl-long { display: none; }
+    .main-tab .lbl-short { display: inline; }
+    .main-tab { padding: 8px 4px; font-size: 12.5px; min-width: 0; }
+  }
+  .main-tab .live-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--danger);
+    display: inline-block; animation: livepulse 1.6s ease-in-out infinite;
+  }
+  @keyframes livepulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+  /* ---------- Plan B (clash resolution) ---------- */
+  .plan-b-tag {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--paper-dim); border: 1px dashed var(--paper-dim); border-radius: 10px; padding: 1px 7px;
+  }
+  .row.backup { border-left-color: var(--paper-dim); border-left-style: dashed; }
+  .row.backup .name { color: var(--paper-dim); }
+  .tt-block.backup, .clash-block.backup { border-style: dashed; border-color: var(--paper-dim); opacity: 0.7; box-shadow: none; }
+  .tt-block.must.backup { background: var(--accent-wash); color: var(--paper); }
+  .tt-block.must.backup .tb-time { color: var(--paper-dim); }
+  .tt-legend .lg-backup { border-style: dashed; border-color: var(--paper-dim); }
+  .resolve-box { margin-top: 10px; }
+  .resolve-note { font-size: 12.5px; line-height: 1.45; color: var(--paper-dim); }
+  .resolve-note.warn { color: var(--danger); }
+  .resolve-note b { color: var(--paper); font-weight: 600; }
+  .other-shows { font-size: 12px; color: var(--paper-dim); margin-top: 6px; line-height: 1.5; }
+  .other-shows .ok { color: var(--success); font-weight: 600; }
+  .resolve-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .resolve-btn {
+    font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+    background: none; color: var(--paper); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 6px 10px;
+  }
+  .resolve-btn:hover { border-color: var(--paper-dim); }
+  .row .resolve-box { display: none; }
+  .row.open .resolve-box { display: block; }
+
+  /* ---------- Now / Next ---------- */
+  .now-view { margin-top: 12px; }
+  .now-clock {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+    padding: 12px 14px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius);
+  }
+  .now-time { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+  .now-day { font-size: 12.5px; color: var(--paper-dim); margin-top: 4px; }
+  .now-badge {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 10px; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .now-badge.live { background: var(--danger-wash); color: var(--danger); }
+  .now-badge.preview { border: 1px solid var(--line); color: var(--paper-dim); }
+  .now-controls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+  .now-controls label { font-size: 12px; color: var(--paper-dim); }
+  .now-controls select, .now-controls input[type="time"] {
+    font-family: inherit; font-size: 13px; background: var(--bg); color: var(--paper);
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 8px;
+  }
+  .now-controls .resolve-btn { padding: 6px 10px; }
+  .now-section { margin-top: 22px; }
+  .now-section h3 {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--paper-dim); margin: 0 0 8px;
+  }
+  .now-card {
+    border: 1px solid var(--line); border-left: 3px solid var(--success); border-radius: var(--radius);
+    padding: 12px 14px; margin-bottom: 8px; background: var(--bg-raised);
+  }
+  .now-card.big { border-left-color: var(--accent); padding: 16px; }
+  .now-card.must { border-left-color: var(--accent); }
+  .nc-top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  .nc-name { font-weight: 700; font-size: 16px; }
+  .now-card.big .nc-name { font-size: 22px; line-height: 1.15; }
+  .nc-when { font-size: 13px; font-weight: 700; color: var(--accent); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .nc-meta { font-size: 13px; color: var(--paper-dim); margin-top: 4px; line-height: 1.45; }
+  .nc-leave { font-size: 13px; margin-top: 8px; font-weight: 600; }
+  .nc-leave.late { color: var(--danger); }
+  .nc-progress { height: 4px; background: var(--line); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+  .nc-progress span { display: block; height: 100%; background: var(--success); }
+  .nc-planb { font-size: 12.5px; color: var(--paper-dim); margin-top: 8px; border-top: 1px dashed var(--line); padding-top: 8px; }
+  .now-mini { display: grid; grid-template-columns: 48px 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .now-mini .t { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 14px; }
+  .now-mini .n { font-weight: 600; font-size: 14px; }
+  .now-mini .m { font-size: 12px; color: var(--paper-dim); margin-top: 2px; }
+  .now-star {
+    background: none; border: 1px solid var(--line); color: var(--paper-dim); border-radius: var(--radius);
+    width: 36px; height: 36px; cursor: pointer; font-size: 17px;
+  }
+  .now-star.on { color: var(--accent); border-color: var(--accent); }
+  .now-empty { font-size: 13.5px; color: var(--paper-dim); line-height: 1.5; padding: 4px 0; }
+  .now-foot { font-size: 11.5px; color: var(--paper-dim); margin-top: 14px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="hero-top">
+      <p class="kicker">Left of the Dial · 21–24 October 2026 · Rotterdam</p>
+      <div class="header-actions">
+        <button class="icon-btn" id="shareBtn" title="Share" aria-label="Share your picks">⤴ <span class="icon-btn-label">Share</span></button>
+        <button class="icon-btn" id="printBtn" title="Print" aria-label="Print your picks">🖨 <span class="icon-btn-label">Print</span></button>
+      </div>
+    </div>
+    <h1>Build your weekend</h1>
+    <p class="hero-sub">162 acts across four days. Star what you want to catch — clashes on the same day get flagged automatically.</p>
+  </header>
+
+  <nav class="main-tabs" id="mainTabs"></nav>
+
+  <nav class="days" id="dayNav"></nav>
+
+  <div class="toolbar" id="filterBar">
+    <input type="search" id="search" placeholder="Search act, artist you like, or genre…">
+    <select id="genreFilter">
+      <option value="">All genres</option>
+    </select>
+    <div class="layout-toggle" id="layoutToggle" role="group" aria-label="Schedule layout">
+      <button type="button" data-layout="list">List</button>
+      <button type="button" data-layout="grid">Timetable</button>
+    </div>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <div class="clash-popover" id="clashPopover" hidden></div>
+
+  <footer>
+    <span>Data pulled from the official 2026 line-up pages.</span>
+    <button class="reset-btn" id="resetBtn">Clear my picks</button>
+  </footer>
+</div>
+
+<script id="lotd-data" type="application/json">
+[{"n":"Al Cologne (UK)","f":"Angel Olsen / Sharon Van Etten / Big Thief","g":"folk / indie pop / pop","s":[{"d":"Friday","v":"ARMINIUS UP","t":"22:40"},{"d":"Saturday","v":"MONO","t":"18:20"}]},{"n":"Alice Costelloe (UK)","f":"Cate Le Bon / Feist / Andy Shauf","g":"folk / indie pop / pop","s":[{"d":"Thursday","v":"DE DOELEN WBH","t":"23:30"},{"d":"Friday","v":"PARADIJSKERK","t":"16:50"}]},{"n":"Alien Boy (US)","f":"Fountains of Wayne / Third Eye Blind","g":"alternative rock / indie pop / pop","s":[{"d":"Thursday","v":"STALLES (FKA CENTRAAL)","t":"22:00"},{"d":"Friday","v":"TR FOYER","t":"20:20"}]},{"n":"Any Young Mechanic (AU)","f":"Vampire Weekend / Violent Femmes / Of Monsters and Men","g":"folk / pop / slacker rock","s":[{"d":"Thursday","v":"BARRIO","t":"19:00"},{"d":"Thursday","v":"SALSABILITY","t":"23:00"}]},{"n":"Arkayla (UK)","f":"The K's / Oasis / Inhaler","g":"indie rock / rock","s":[{"d":"Thursday","v":"ANNABEL DOWN","t":"19:00"},{"d":"Thursday","v":"BARRIO","t":"23:30"}]},{"n":"ashnymph (UK)","f":"808 State / Depeche Mode / Leftfield / Nine Inch Nails","g":"alt-rave / industrial / rock","s":[{"d":"Thursday","v":"SAHARA","t":"22:50"},{"d":"Saturday","v":"WORM 2","t":"17:00"},{"d":"Saturday","v":"REMASTERED","t":"22:20"}]},{"n":"AtticOmatic (UK)","f":"English Teacher / Horsegirl / Wolf Alice / Porch Light","g":"art-pop / avant-garde / rock","s":[{"d":"Thursday","v":"DE DOELEN UP","t":"22:30"},{"d":"Friday","v":"REIJNGOUD","t":"17:30"}]},{"n":"August (UK)","f":"TV On The Radio / Tom Waits","g":"art-pop / art-rock / rock","s":[{"d":"Thursday","v":"UNIEK","t":"20:50"},{"d":"Friday","v":"ROTOWN","t":"16:00"},{"d":"Friday","v":"TR UP","t":"21:00"}]},{"n":"Babe Haven (US)","f":"Lambrini Girls / Die Spitz","g":"heavy / punk / rock","s":[{"d":"Friday","v":"DE DOELEN WBH","t":"23:30"},{"d":"Saturday","v":"REIJNGOUD","t":"19:00"}]},{"n":"Bathing Suits (UK)","f":"Prodigy / miss kittin / bassvictim / Sextile","g":"alt-rave / noise / rock","s":[{"d":"Friday","v":"ANNABEL DOWN","t":"21:10"},{"d":"Saturday","v":"REMASTERED","t":"20:50"}]},{"n":"bed (JP)","f":"Ministry / Revolting Cocks / Static-X","g":"alt-rave / heavy / industrial","s":[{"d":"Thursday","v":"WORM 1","t":"19:10"},{"d":"Thursday","v":"TR UP","t":"23:10"}]},{"n":"Beige (NL)","f":"King Krule / Pixies / Sonic Youth","g":"college rock / indie rock / shoegaze","s":[{"d":"Wednesday","v":"ROTOWN","t":"20:40"}]},{"n":"Ben Kidson (UK)","f":"The Streets / Getdown Services / Sleaford Mods","g":"alt-hip hop / indie pop / lyrical-poetry","s":[{"d":"Thursday","v":"ROTOWN","t":"22:20"},{"d":"Friday","v":"BIRD","t":"16:00"}]},{"n":"benchwarmer (UK)","f":"Tiny Moving Parts / A Place to Bury Strangers / Just Mustard","g":"alternative rock / rock / shoegaze","s":[{"d":"Thursday","v":"TR DOWN","t":"21:20"},{"d":"Friday","v":"SAHARA","t":"16:10"}]},{"n":"Bert (UK)","f":"Arthur Russell / Beck / Car Seat Headrest","g":"alt-soul / folk / singer-songwriter","s":[{"d":"Friday","v":"BIRD","t":"19:00"},{"d":"Saturday","v":"ARMINIUS UP","t":"16:40"}]},{"n":"Black Nylon (IE)","f":"The Jesus and Mary Chain / Deftones","g":"post-punk / rock","s":[{"d":"Friday","v":"TR FOYER","t":"23:30"},{"d":"Saturday","v":"ANNEBEL UP","t":"23:20"}]},{"n":"Bloodworm (UK)","f":"DIIV / Killing Joke / Echo and the Bunnymen","g":"post-punk / rock / wave","s":[{"d":"Thursday","v":"ROTOWN","t":"23:50"},{"d":"Friday","v":"DE DOELEN WBH","t":"18:20"}]},{"n":"bog band (IE)","f":"Prefab Sprout, Dijon, Nourished By Time, The Blue Nile","g":"alt-soul / indie pop / pop","s":[{"d":"Friday","v":"BIRD","t":"20:30"},{"d":"Saturday","v":"WORM 2","t":"22:00"}]},{"n":"Bramwell (UK)","f":"Guided by Voices, The La's","g":"indie pop / powerpop / rock","s":[{"d":"Friday","v":"REIJNGOUD","t":"22:00"},{"d":"Saturday","v":"BARRIO","t":"19:20"}]},{"n":"Brooki (IE)","f":"PJ Harvey / Wunderhorse / Prewn","g":"alternative rock / rock","s":[{"d":"Thursday","v":"BIRD","t":"22:20"},{"d":"Friday","v":"TR UP","t":"16:00"}]},{"n":"Burglar (IE)","f":"The XX, King Krule","g":"indie rock / rock / slacker rock","s":[{"d":"Friday","v":"V2_","t":"18:10"},{"d":"Saturday","v":"TR FOYER","t":"20:20"}]},{"n":"casual smart (UK)","f":"Ugly, Big Thief","g":"alt-country / folk / indie pop","s":[{"d":"Thursday","v":"ARMINIUS DOWN","t":"20:30"},{"d":"Friday","v":"V2_","t":"16:40"}]},{"n":"Charlie Noordewier (UK)","f":"Ray Lamontagne / Nick Drake","g":"alt-soul / folk / pop","s":[{"d":"Saturday","v":"TR FOYER","t":"17:00"},{"d":"Saturday","v":"UNIEK","t":"22:50"}]},{"n":"Cherryholt (UK)","f":"The La's / The Kooks / Catfish and the Bottlemen","g":"indie pop / rock","s":[{"d":"Friday","v":"TR DOWN","t":"21:40"},{"d":"Saturday","v":"BARRIO","t":"17:50"},{"d":"Saturday","v":"DE DOELEN WBH","t":"22:00"}]},{"n":"Child of Prague (IE)","f":"Geese / American Football / Black Country, New Road / Man/Woman/Chainsaw","g":"alt-country / folk / pop","s":[{"d":"Thursday","v":"TR UP","t":"21:40"},{"d":"Friday","v":"ROTOWN","t":"19:00"},{"d":"Saturday","v":"ANNABEL DOWN","t":"19:40"}]},{"n":"COMPOST COMPOST COMPOST (UK)","f":"Radiohead / Rival Consoles / Dove Ellis","g":"","s":[{"d":"Thursday","v":"ARMINIUS DOWN","t":"22:00"},{"d":"Friday","v":"DE DOELEN UP","t":"19:20"},{"d":"Saturday","v":"TR UP","t":"22:40"}]},{"n":"Cordelia Gartside (UK)","f":"Big Thief / Radiohead / Mary in the Junkyard","g":"art-rock / indie rock / rock","s":[{"d":"Friday","v":"ANNABEL UP","t":"21:50"},{"d":"Saturday","v":"TR FOYER","t":"22:00"}]},{"n":"Corin V (UK)","f":"Bright Eyes / Andy Shauf","g":"folk / indie rock / singer-songwriter","s":[{"d":"Friday","v":"PARADIJSKERK","t":"21:20"},{"d":"Saturday","v":"SAHARA","t":"19:10"}]},{"n":"Cosign (UK)","f":"Postal Service / Perfume Genius / Imogen Heap","g":"dream pop / pop","s":[{"d":"Thursday","v":"V2_","t":"20:40"},{"d":"Friday","v":"TR FOYER","t":"18:40"}]},{"n":"Curiosity Shop (UK)","f":"James Taylor, Whitney","g":"alt-country / folk / indie pop","s":[{"d":"Friday","v":"WAALSE KERK","t":"20:00"},{"d":"Saturday","v":"BIRD","t":"20:30"}]},{"n":"Date Camp (DK)","f":"Car Seat Headrest, Neutral Milk Hotel","g":"indie pop / rock","s":[{"d":"Friday","v":"REIJNGOUD","t":"20:30"},{"d":"Saturday","v":"STALLES (FKA CENTRAAL)","t":"18:50"}]},{"n":"DAUFØDT (NO)","f":"The Germs / Wax Head","g":"heavy / noise / punk","s":[{"d":"Thursday","v":"TR FOYER","t":"22:20"},{"d":"Friday","v":"WORM 2","t":"18:40"}]},{"n":"Doom Fever (NL)","f":"Teenage Fanclub / Screaming Trees / Dinosaur Jr.","g":"grunge / indie rock / rock","s":[{"d":"Wednesday","v":"STALLES (FKA CENTRAAL)","t":"21:10"}]},{"n":"Ebby (NL)","f":"Lewsberg / Cate Le Bon / Horsegirl","g":"art-pop / experimental / rock","s":[{"d":"Wednesday","v":"STALLES (FKA CENTRAAL)","t":"22:30"}]},{"n":"Echo Northstar (IE)","f":"Sonic Youth / Wet Leg / TV on the Radio","g":"alternative rock / indie rock / pop","s":[{"d":"Friday","v":"WORM 1","t":"19:30"},{"d":"Saturday","v":"TR DOWN","t":"18:20"}]},{"n":"Esmeralda Road (IE)","f":"Wunderhorse / Radio Free Alice","g":"math rock / post-punk / rock","s":[{"d":"Thursday","v":"ANNABEL UP","t":"21:10"},{"d":"Friday","v":"DE DOELEN UP","t":"16:20"}]},{"n":"Family Stereo (UK)","f":"Neutral Milk Hotel / Elliott Smith","g":"alt-country / folk / lyrical-poetry","s":[{"d":"Friday","v":"ARMINIUS UP","t":"21:10"},{"d":"Saturday","v":"SALSABILITY","t":"18:40"}]},{"n":"Fellatio (NL)","f":"Liars / Warmduscher / The Rapture","g":"alt-disco / alt-rave / avant-garde","s":[{"d":"Wednesday","v":"ROTOWN","t":"22:00"}]},{"n":"Ferguson Hi-Fi (UK)","f":"Fountains of Wayne / Superdrag","g":"garage / powerpop / rock","s":[{"d":"Friday","v":"V11","t":"22:40"},{"d":"Saturday","v":"DE DOELEN UP","t":"23:40"}]},{"n":"Flowers for the Dead (US)","f":"PJ Harvey, Sonic Youth, the Breeders","g":"alternative rock / grunge / rock","s":[{"d":"Friday","v":"V11","t":"21:10"},{"d":"Saturday","v":"MONO","t":"19:50"}]},{"n":"foot foot (UK)","f":"Black Country New Road / Mother Falcon / Slint","g":"art-rock / folk / indie rock","s":[{"d":"Thursday","v":"SALSABILITY","t":"20:00"},{"d":"Friday","v":"BARRIO","t":"18:00"}]},{"n":"GARDENS (AT)","f":"Best Coast, Wednesday","g":"dream pop / indie pop / rock","s":[{"d":"Friday","v":"WORM 1","t":"21:10"},{"d":"Saturday","v":"ANNABEL UP","t":"18:50"}]},{"n":"girlfriend. (IE)","f":"Sprints / Savages","g":"grunge / rock / shoegaze","s":[{"d":"Friday","v":"BAANHOF","t":"17:50"},{"d":"Saturday","v":"DE DOELEN UP","t":"20:50"}]},{"n":"Glasshouse Red Spider Mite (UK)","f":"Caroline, Codeine, Low, Shaking Hand","g":"art-pop / pop","s":[{"d":"Friday","v":"ARMINIUS DOWN","t":"22:00"},{"d":"Saturday","v":"V2_","t":"18:10"}]},{"n":"Gnarcissists (US)","f":"Fidlar / The Ramones / Dune Rats","g":"punk / rock","s":[{"d":"Thursday","v":"V11","t":"23:20"},{"d":"Saturday","v":"ARMINIUS DOWN","t":"16:00"},{"d":"Saturday","v":"WORM 1","t":"22:50"}]},{"n":"Goodbye (UK)","f":"Cocteau Twins / Warpaint / Slowdive","g":"indie pop / indie rock","s":[{"d":"Friday","v":"STALLES (FKA CENTRAAL)","t":"17:20"},{"d":"Saturday","v":"WAALSE KERK","t":"20:00"}]},{"n":"Gordi (AU)","f":"Florence + the Machine / Bon Iver","g":"indie pop / pop","s":[{"d":"Friday","v":"WORM 2","t":"20:20"},{"d":"Saturday","v":"PARADIJSKERK","t":"16:50"}]},{"n":"Gwen (UK)","f":"Kim Gordon / Automatic / Lizzy Mercier Descloux","g":"industrial / rock / wave","s":[{"d":"Saturday","v":"SAHARA","t":"17:40"},{"d":"Saturday","v":"WAALSE KERK","t":"21:30"}]},{"n":"GX Nurse (UK)","f":"Blonde Redhead / Sneaker Pimps","g":"indie pop / rock / shoegaze","s":[{"d":"Thursday","v":"WORM 1","t":"22:30"},{"d":"Friday","v":"REMASTERED","t":"20:50"},{"d":"Saturday","v":"ROTOWN","t":"23:30"}]},{"n":"Hamburger (UK)","f":"Sunny Day Real Estate / Teenage Fanclub","g":"college rock / indie rock / rock","s":[{"d":"Thursday","v":"SALSABILITY","t":"21:30"},{"d":"Saturday","v":"V11","t":"19:40"},{"d":"Saturday","v":"BAANHOF","t":"22:20"}]},{"n":"Hammok (NO)","f":"The Dillinger Escape Plan / Truck Violence","g":"heavy / noise / punk","s":[{"d":"Friday","v":"ANNABEL DOWN","t":"22:40"}]},{"n":"Hillsboro (CA)","f":"Militarie Gun / High Vis / Sunny Day Real Estate","g":"indie rock / post-rock / rock","s":[{"d":"Thursday","v":"UNIEK","t":"19:20"},{"d":"Friday","v":"BARRIO","t":"20:50"}]},{"n":"Holly Head (UK)","f":"Fugazi / Gang of Four / Iceage","g":"dance-punk / post-punk / rock","s":[{"d":"Thursday","v":"V11","t":"22:00"},{"d":"Friday","v":"MONO","t":"18:20"},{"d":"Saturday","v":"DE DOELEN WBH","t":"19:50"}]},{"n":"Hungry (UK)","f":"Deadletter / Yard Act / Idles","g":"dance-punk / post-punk / rock","s":[{"d":"Friday","v":"ANNABEL UP","t":"20:20"},{"d":"Saturday","v":"TR FOYER","t":"18:40"}]},{"n":"Hyd (US)","f":"Oklou / Caroline Polachek / FKA Twigs","g":"alt-disco / experimental / pop","s":[{"d":"Friday","v":"SAHARA","t":"17:40"},{"d":"Saturday","v":"SALSABILITY","t":"20:20"}]},{"n":"Imaginary Husband (UK)","f":"Wire, the Gun Club","g":"math rock / punk / rock","s":[{"d":"Friday","v":"STALLES (FKA CENTRAAL)","t":"23:20"},{"d":"Saturday","v":"BARRIO","t":"20:50"}]},{"n":"Insider Trading (UK)","f":"Black Country, New Road, Maruja, Squid","g":"math rock / post-punk / post-rock","s":[{"d":"Friday","v":"MONO","t":"16:50"},{"d":"Saturday","v":"V2_","t":"22:40"}]},{"n":"Iskandr (NL)","f":"Dead Can Dance, Amenra, Lankum, Leibach,","g":"folk / industrial","s":[{"d":"Thursday","v":"WORM 2","t":"23:20"},{"d":"Friday","v":"WAALSE KERK","t":"21:30"}]},{"n":"Jackson Roy (UK)","f":"the Shins / Rufus Wainright / Grizzly Bear","g":"experimental / folk / indie pop","s":[{"d":"Friday","v":"DE DOELEN UP","t":"20:50"},{"d":"Saturday","v":"PARADIJSKERK","t":"19:50"}]},{"n":"Jana Horn (US)","f":"Aldous Harding / Steve Gunn / Adrienne Lenker","g":"folk / lyrical-poetry / pop","s":[{"d":"Friday","v":"PARADIJSKERK","t":"18:20"},{"d":"Saturday","v":"WORM 2","t":"18:40"}]},{"n":"Jawdropped (US)","f":"The Lemonheads / Veruca Salt / The Dandy Warhols","g":"rock / slacker rock","s":[{"d":"Thursday","v":"STALLES (FKA CENTRAAL)","t":"19:00"},{"d":"Friday","v":"ROTOWN","t":"17:30"},{"d":"Friday","v":"BARRIO","t":"22:20"}]},{"n":"JJ Bull (UK)","f":"Chromeo, EBBB","g":"alt-disco / alt-rave / pop","s":[{"d":"Friday","v":"WORM 2","t":"22:00"},{"d":"Saturday","v":"REIJNGOUD","t":"20:30"}]},{"n":"Juni Habel (NO)","f":"Jake Xerxes Fussell / Iron & Wine / Sufjan Stevens","g":"folk / singer-songwriter","s":[{"d":"Friday","v":"PARADIJSKERK","t":"22:50"},{"d":"Saturday","v":"DE DOELEN WBH","t":"18:20"}]},{"n":"Kelly No Brakes (SE/FR)","f":"Alvvays / Father John Misty / Lana Del Rey","g":"dream pop / pop","s":[{"d":"Thursday","v":"ANNABEL DOWN","t":"22:00"},{"d":"Friday","v":"BAANHOF","t":"16:20"}]},{"n":"LA FLEMME (FR)","f":"Weezer / Juniore / Snail Mail / Hinds","g":"garage / rock","s":[{"d":"Thursday","v":"WORM 1","t":"20:50"},{"d":"Friday","v":"TR FOYER","t":"17:00"}]},{"n":"Lacuna (UK)","f":"Bon Iver, Daughter, Lana Del Rey","g":"dream pop / folk / pop","s":[{"d":"Thursday","v":"TR FOYER","t":"19:20"},{"d":"Friday","v":"TR UP","t":"19:20"}]},{"n":"Latter (US)","f":"PISS, Babes In Toyland","g":"heavy / noise / punk","s":[{"d":"Friday","v":"ANNABEL DOWN","t":"19:40"},{"d":"Saturday","v":"ARMINIUS DOWN","t":"19:00"}]},{"n":"LAWN CHAIR (US/DE)","f":"Lime Garden, Wet Leg, Le Tigre","g":"punk / rock","s":[{"d":"Friday","v":"STALLES (FKA CENTRAAL)","t":"18:50"},{"d":"Saturday","v":"MONO","t":"21:20"}]},{"n":"leather.head (UK)","f":"Slint / Godspeed You! Black Emperor","g":"experimental / post-rock / rock","s":[{"d":"Friday","v":"TR DOWN","t":"18:20"},{"d":"Saturday","v":"UNIEK","t":"21:20"}]},{"n":"Leela Rosa (NL)","f":"Erika de Casier / Smerz / ML Buch","g":"art-pop / dream pop / pop","s":[{"d":"Wednesday","v":"UNIEK","t":"22:10"},{"d":"Saturday","v":"PARADIJSKERK","t":"18:20"}]},{"n":"Lemonsuckr (UK)","f":"Jamie T, Friendly Fires, Yaang","g":"alt-rave / dance-punk / rock","s":[{"d":"Friday","v":"ARMINIUS DOWN","t":"23:30"},{"d":"Saturday","v":"TR UP","t":"21:00"}]},{"n":"Library Card (NL)","f":"Protomartyr / Dry Cleaning / Sinead O'Brien","g":"lyrical-poetry / post-punk / rock","s":[{"d":"Wednesday","v":"ARMINIUS DOWN","t":"22:40"}]},{"n":"Lots Of (UK)","f":"Unwound / Slint","g":"math rock / noise / rock","s":[{"d":"Friday","v":"UNIEK","t":"22:50"},{"d":"Saturday","v":"WORM 2","t":"20:20"}]},{"n":"lots of hands (UK)","f":"Alex G / Mc.gee / TV Girl","g":"experimental / indie pop","s":[{"d":"Thursday","v":"ARMINIUS DOWN","t":"23:20"},{"d":"Saturday","v":"WORM 1","t":"17:50"},{"d":"Saturday","v":"BARRIO","t":"22:20"}]},{"n":"Loveth Besamoh (NL)","f":"Nick Cave / King Krule / Tropical Fuck Storm","g":"post-punk / rock","s":[{"d":"Wednesday","v":"ARMINIUS DOWN","t":"21:20"}]},{"n":"lttl mort (UK)","f":"Nine Inch Nails, Sisters of Mercy, Twin Tribes","g":"alt-rave / industrial / rock","s":[{"d":"Thursday","v":"UNIEK","t":"23:50"},{"d":"Friday","v":"MONO","t":"22:50"}]},{"n":"Lucky Iris (UK)","f":"Underscores / Ninajirachi / SOPHIE","g":"alt-disco / alt-pop / pop","s":[{"d":"Friday","v":"WORM 2","t":"23:40"},{"d":"Saturday","v":"ARMINIUS UP","t":"21:10"}]},{"n":"Magasin (NL)","f":"Talking Heads / Le Tigre","g":"art-pop / post-punk / wave","s":[{"d":"Wednesday","v":"ROTOWN","t":"19:20"},{"d":"Saturday","v":"DE DOELEN UP","t":"17:50"}]},{"n":"Maicín (IE)","f":"Pavement / Neutral Milk Hotel","g":"folk / indie pop / rock","s":[{"d":"Thursday","v":"SAHARA","t":"19:50"},{"d":"Saturday","v":"WAALSE KERK","t":"18:30"},{"d":"Saturday","v":"DE DOELEN UP","t":"22:20"}]},{"n":"MAQUINA. (PT)","f":"Crows / Suicide / Killing Joke","g":"alt-rave / heavy / industrial","s":[{"d":"Saturday","v":"TR UP","t":"19:20"},{"d":"Saturday","v":"DE DOELEN WBH","t":"23:30"}]},{"n":"Max Sloan (UK)","f":"Pinegrove / Cameron Winter / Leith Ross","g":"folk / indie pop / singer-songwriter","s":[{"d":"Thursday","v":"BIRD","t":"20:50"},{"d":"Friday","v":"WAALSE KERK","t":"18:30"}]},{"n":"Mek'Dr'Dr (BE)","f":"Au Pairs / ESG / Goat Girl","g":"alt-pop / pop / post-punk","s":[{"d":"Thursday","v":"BARRIO","t":"20:30"},{"d":"Friday","v":"MONO","t":"21:20"}]},{"n":"Melanie Baker (UK)","f":"Courtney Barnett, Weezer","g":"grunge / pop / rock","s":[{"d":"Friday","v":"ANNABEL DOWN","t":"18:10"},{"d":"Saturday","v":"BAANHOF","t":"20:50"}]},{"n":"MF Tomlinson (UK)","f":"Nick Cave / Hamish Hawk / Bill Callahan / Yo La Tengo","g":"folk / singer-songwriter / slowcore","s":[{"d":"Friday","v":"PARADIJSKERK","t":"19:50"},{"d":"Saturday","v":"ANNABEL UP","t":"17:20"}]},{"n":"Michael Ian Cummings (US)","f":"Kevin Morby / Courtney Barnett / His Golden Messenger","g":"rock / singer-songwriter","s":[{"d":"Friday","v":"WORM 2","t":"17:00"},{"d":"Saturday","v":"PARADIJSKERK","t":"21:20"}]},{"n":"Midscale (FR)","f":"Temper Trap, Slowdive","g":"post-rock / rock / shoegaze","s":[{"d":"Thursday","v":"DE DOELEN UP","t":"19:10"},{"d":"Friday","v":"STALLES (FKA CENTRAAL)","t":"20:20"}]},{"n":"Milkweed (UK)","f":"Lankum / Madra Salach / Jozef van Wissem","g":"experimental / folk","s":[{"d":"Friday","v":"ROTOWN","t":"22:00"},{"d":"Saturday","v":"V11","t":"18:10"},{"d":"Saturday","v":"ARMINIUS DOWN","t":"23:30"}]},{"n":"Milo Korbenski (UK)","f":"Tortoise, Courteneers","g":"indie pop / indie rock / pop","s":[{"d":"Thursday","v":"WORM 2","t":"20:00"},{"d":"Friday","v":"V2_","t":"21:10"}]},{"n":"Mindsigh (UK)","f":"Nirvana / Bleech 9:3 / Ditz","g":"alternative rock / grunge / rock","s":[{"d":"Friday","v":"DE DOELEN UP","t":"22:20"},{"d":"Saturday","v":"REIJNGOUD","t":"22:00"}]},{"n":"Mixed Waste (BE)","f":"Fontaines D.C. / Pixies / IDLES","g":"post-punk / rock","s":[{"d":"Thursday","v":"DE DOELEN WBH","t":"19:40"},{"d":"Friday","v":"BARRIO","t":"19:20"}]},{"n":"MLEKO (UK)","f":"The Orchestra (for now) / Black Country, New Road","g":"art-rock / post-rock / rock","s":[{"d":"Thursday","v":"V2_","t":"19:20"},{"d":"Friday","v":"V11","t":"16:40"}]},{"n":"Monde UFO (US)","f":"Yo La Tengo / Spacemen 3 / John Maus","g":"indie pop / indie rock","s":[{"d":"Friday","v":"V2_","t":"19:40"},{"d":"Saturday","v":"ARMINIUS DOWN","t":"17:30"}]},{"n":"Monks (UK)","f":"Hot Chip, Django Django, Je Goddard","g":"alt-rave / rock / synth pop","s":[{"d":"Friday","v":"TR DOWN","t":"16:40"},{"d":"Saturday","v":"ANNABEL UP","t":"20:20"}]},{"n":"mry (UK)","f":"Cigarettes After Sex / Mazzy Star / Beach House","g":"dream pop / post-rock / shoegaze","s":[{"d":"Thursday","v":"PARADIJSKERK","t":"21:20"},{"d":"Friday","v":"ARMINIUS UP","t":"19:40"}]},{"n":"My Purse (NL)","f":"Devo / the Homesick / The Cool Greenhouse","g":"art-pop / post-punk","s":[{"d":"Friday","v":"SAHARA","t":"22:10"},{"d":"Saturday","v":"WORM 1","t":"19:30"}]},{"n":"Nadeem Din-Gabisi (UK)","f":"Coby Sey / Kae tempest / Joshua Idehen","g":"alt-hip hop / alt-soul / lyrical-poetry","s":[{"d":"Thursday","v":"BIRD","t":"19:20"},{"d":"Thursday","v":"PARADIJSKERK","t":"22:50"}]},{"n":"Neve Cariad (UK)","f":"Julia Jacklin, Boygenius, Lucinda Williams","g":"alt-country / folk / pop","s":[{"d":"Friday","v":"ARMINIUS UP","t":"16:40"},{"d":"Saturday","v":"WAALSE KERK","t":"17:00"}]},{"n":"Newbuild (UK)","f":"Maruja / black midi","g":"dream pop / experimental / post-punk","s":[{"d":"Saturday","v":"BAANHOF","t":"17:40"}]},{"n":"newhvn (IE)","f":"Slow Crush / DIIV","g":"alternative rock / grunge / rock","s":[{"d":"Friday","v":"DE DOELEN WBH","t":"19:50"},{"d":"Saturday","v":"DE DOELEN UP","t":"19:20"}]},{"n":"Nico & Linus (UK)","f":"Love / The Lemon Twigs / Thin Lizzy","g":"indie pop / indie rock / psych","s":[{"d":"Friday","v":"TR FOYER","t":"22:00"},{"d":"Saturday","v":"SALSABILITY","t":"17:00"}]},{"n":"Nina Winder-Lind (SE/UK)","f":"Patti Smith / Aldous Harding / PJ Harvey","g":"folk / lyrical-poetry / pop","s":[{"d":"Thursday","v":"PARADIJSKERK","t":"19:50"},{"d":"Friday","v":"WORM 1","t":"16:10"}]},{"n":"Noonzy (BE)","f":"Warhaus / James Blake / Benny Sings","g":"indie pop / pop","s":[{"d":"Thursday","v":"ANNABEL UP","t":"22:40"},{"d":"Saturday","v":"REMASTERED","t":"19:20"}]},{"n":"Normal Village (UK)","f":"Television, UNIVERSITY, Alien Chicks, Tropical Fuckstorm","g":"art-punk / avant-garde / post-punk","s":[{"d":"Friday","v":"V11","t":"19:40"},{"d":"Saturday","v":"SAHARA","t":"16:10"}]},{"n":"Norman D. Loco (UK)","f":"Feeble Little Horse / Mk. Gee / Blood Orange","g":"art-pop / indie pop / indie rock","s":[{"d":"Friday","v":"WORM 1","t":"17:50"},{"d":"Saturday","v":"SAHARA","t":"20:40"}]},{"n":"Omertà (UK)","f":"Amyl and The Sniffers / Soft Play / Mission of Burma","g":"garage / noise / punk","s":[{"d":"Thursday","v":"SAHARA","t":"21:20"},{"d":"Saturday","v":"UNIEK","t":"16:50"},{"d":"Saturday","v":"SALSABILITY","t":"23:30"}]},{"n":"Oslo Twins (UK)","f":"Moloko, Yeah Yeah Yeahs","g":"alt-disco / alt-rave / pop","s":[{"d":"Friday","v":"TR UP","t":"22:40"},{"d":"Saturday","v":"UNIEK","t":"19:50"}]},{"n":"Painkiller (UK)","f":"Ty Segall / Bass Drum of Death","g":"garage / rock","s":[{"d":"Thursday","v":"ARMINIUS DOWN","t":"19:00"},{"d":"Friday","v":"TR DOWN","t":"20:00"}]},{"n":"Pales (FR)","f":"Savages / Protomartyr / Metric","g":"heavy / noise / post-punk","s":[{"d":"Friday","v":"WORM 1","t":"22:50"},{"d":"Saturday","v":"TR UP","t":"16:00"}]},{"n":"Part-Time Model (UK)","f":"Nilüfer Yanya / Honeyglaze / Radiohead / Madison Cunningham","g":"indie rock / rock / synth pop","s":[{"d":"Friday","v":"DE DOELEN UP","t":"23:40"},{"d":"Saturday","v":"ANNABEL DOWN","t":"16:30"},{"d":"Saturday","v":"SAHARA","t":"22:10"}]},{"n":"Paulie Swan (UK)","f":"King Krule / Cameron Winter","g":"lyrical-poetry / singer-songwriter","s":[{"d":"Friday","v":"ROTOWN","t":"20:50"},{"d":"Saturday","v":"REMASTERED","t":"17:50"},{"d":"Saturday","v":"ANNABEL DOWN","t":"21:10"}]},{"n":"Perfect Binding (UK)","f":"Carseat Headrest / Cola / Jarvis Cocker","g":"folk / indie rock / post-rock","s":[{"d":"Friday","v":"STALLES (FKA CENTRAAL)","t":"21:50"}]},{"n":"plainhead (DE)","f":"Yo La Tengo, The Notwist","g":"dream pop / folk / pop","s":[{"d":"Thursday","v":"V11","t":"19:20"},{"d":"Friday","v":"SAHARA","t":"20:40"}]},{"n":"Poodle (NL)","f":"Feet / Hinds / Wet Leg","g":"art-punk / garage / rock","s":[{"d":"Wednesday","v":"UNIEK","t":"19:30"}]},{"n":"pushbike (UK)","f":"The Men, The Replacements","g":"college rock / powerpop / rock","s":[{"d":"Friday","v":"ANNABEL UP","t":"18:50"},{"d":"Saturday","v":"STALLES (FKA CENTRAAL)","t":"17:20"}]},{"n":"Pyncher (UK)","f":"Together Pangea, Black Lips, The Bug Club","g":"art-punk / garage / post-rock","s":[{"d":"Friday","v":"REIJNGOUD","t":"19:00"},{"d":"Saturday","v":"ROTOWN","t":"19:00"}]},{"n":"RAGEFLOWER (AU)","f":"Garbage / Haim / Wolf Alice / St. Vincent","g":"indie rock / pop / rock","s":[{"d":"Friday","v":"DE DOELEN WBH","t":"22:00"},{"d":"Saturday","v":"BIRD","t":"17:30"}]},{"n":"Rampressure (UK)","f":"The Melvins / The Black Lips","g":"garage / heavy / noise","s":[{"d":"Friday","v":"MONO","t":"19:50"},{"d":"Saturday","v":"STALLES (FKA CENTRAAL)","t":"20:20"}]},{"n":"Rian Brazil (UK)","f":"James Blake / When Saints Go Machine / Tennyson","g":"alt-hip hop / alt-pop / alt-rave","s":[{"d":"Friday","v":"BIRD","t":"22:00"},{"d":"Saturday","v":"WORM 2","t":"17:50"}]},{"n":"Ringlets (NZ)","f":"Westside Cowboy / Sonic Youth","g":"post-punk / rock","s":[{"d":"Friday","v":"DE DOELEN UP","t":"17:50"},{"d":"Saturday","v":"V2_","t":"19:40"}]},{"n":"Ropeburn (UK/IE)","f":"Alex G / American Football / Pinegrove / Her's","g":"folk / math rock / post-rock","s":[{"d":"Thursday","v":"UNIEK","t":"22:20"},{"d":"Friday","v":"WAALSE KERK","t":"17:00"}]},{"n":"Scotstown Dance Band (UK)","f":"Belle & Sebastian / Madra Salach","g":"alt-country / pop / rock","s":[{"d":"Friday","v":"UNIEK","t":"16:50"},{"d":"Saturday","v":"V11","t":"21:10"}]},{"n":"Serena Clara (UK)","f":"Mitski / Björk","g":"art-pop / lyrical-poetry / pop","s":[{"d":"Thursday","v":"WORM 2","t":"21:40"},{"d":"Saturday","v":"V11","t":"16:40"},{"d":"Saturday","v":"PARADIJSKERK","t":"22:40"}]},{"n":"Shark School (IE)","f":"IDLES / Die Spitz","g":"punk / rock","s":[{"d":"Friday","v":"BAANHOF","t":"19:20"},{"d":"Saturday","v":"V11","t":"22:40"}]},{"n":"ShitKid (SE)","f":"SWMRS / Hinds / Strange Boys / King Tuff","g":"alt-pop / garage / indie rock","s":[{"d":"Friday","v":"SAHARA","t":"23:40"},{"d":"Saturday","v":"WORM 1","t":"21:10"}]},{"n":"Shrink (UK)","f":"Dove Ellis / Sam Fender / Jeff Buckley / Radiohead","g":"indie rock / rock","s":[{"d":"Thursday","v":"ROTOWN","t":"20:50"},{"d":"Friday","v":"BAANHOF","t":"20:50"},{"d":"Saturday","v":"ARMINIUS DOWN","t":"20:30"}]},{"n":"Smudged (NL)","f":"Fat Dog / Viagra Boys / Warmduscher","g":"alt-rave / rock / synth pop","s":[{"d":"Wednesday","v":"ARMINIUS DOWN","t":"20:00"}]},{"n":"Spanish Horses (FR/UK)","f":"Parquet Courts / The Coral / Iceage","g":"indie pop / indie rock / rock","s":[{"d":"Friday","v":"ARMINIUS DOWN","t":"17:30"},{"d":"Saturday","v":"TR DOWN","t":"21:40"}]},{"n":"Spike Fuck (AU)","f":"Soft Cell / John Maus / Townes Van Zandt","g":"noir / singer-songwriter / wave","s":[{"d":"Friday","v":"ARMINIUS DOWN","t":"19:00"},{"d":"Saturday","v":"ROTOWN","t":"22:00"}]},{"n":"State Of Grace (IE)","f":"PJ Harvey / King Hannah","g":"alt-soul / rock","s":[{"d":"Thursday","v":"DE DOELEN UP","t":"20:50"},{"d":"Friday","v":"ANNABEL UP","t":"23:20"},{"d":"Saturday","v":"ROTOWN","t":"20:30"}]},{"n":"Stonks (BE)","f":"Squid / Shame","g":"dance-punk / noise / punk","s":[{"d":"Saturday","v":"DE DOELEN UP","t":"16:20"},{"d":"Saturday","v":"STALLES (FKA CENTRAAL)","t":"21:50"}]},{"n":"Stoop Kid (BE)","f":"MJ Lenderman / Alex G","g":"indie pop / pop / rock","s":[{"d":"Thursday","v":"TR DOWN","t":"19:50"},{"d":"Friday","v":"UNIEK","t":"19:50"}]},{"n":"studio20 (UK)","f":"Water From Your Eyes / Broken Social Scene / Man/Woman/Chainsaw / Sonic Youth","g":"alt-pop / experimental","s":[{"d":"Friday","v":"SALSABILITY","t":"20:20"},{"d":"Saturday","v":"V2_","t":"16:40"}]},{"n":"sundayclub (CA)","f":"Alvvays / the 1975","g":"indie pop / indie rock","s":[{"d":"Thursday","v":"V2_","t":"22:20"},{"d":"Saturday","v":"BARRIO","t":"16:20"},{"d":"Saturday","v":"ARMINIUS DOWN","t":"22:00"}]},{"n":"Systeemfalen (NL)","f":"Bad Brains / Minor Threat","g":"punk / rock / sludge","s":[{"d":"Wednesday","v":"UNIEK","t":"20:50"}]},{"n":"Telekura (IE)","f":"Her's / Saint Etienne / Boy Pablo","g":"pop / synth pop","s":[{"d":"Friday","v":"BIRD","t":"17:30"},{"d":"Saturday","v":"ANNABEL UP","t":"21:50"}]},{"n":"Thank (UK)","f":"Flipper, Alec Empire","g":"alt-rave / heavy / industrial","s":[{"d":"Friday","v":"BARRIO","t":"23:50"},{"d":"Saturday","v":"ROTOWN","t":"17:30"},{"d":"Saturday","v":"TR DOWN","t":"23:30"}]},{"n":"The Glowworms (UK)","f":"Declan McKenna / Vampire Weekend","g":"folk / indie rock / pop","s":[{"d":"Friday","v":"ARMINIUS UP","t":"18:10"},{"d":"Saturday","v":"V2_","t":"21:10"}]},{"n":"The Guest List (UK)","f":"The Stone Roses / Declan McKenna / The Kooks","g":"dance-punk / indie pop / indie rock","s":[{"d":"Friday","v":"ROTOWN","t":"23:30"},{"d":"Saturday","v":"TR UP","t":"17:40"}]},{"n":"The Healing Power of Horses (UK)","f":"horsegirl / bar Italia / C Turtle","g":"alt-pop / indie pop / pop","s":[{"d":"Thursday","v":"ANNABEL DOWN","t":"20:30"},{"d":"Friday","v":"ARMINIUS DOWN","t":"16:00"}]},{"n":"The Heavenly Bodes (UK)","f":"The Sonics / The Allah-Las","g":"garage / pop / psych","s":[{"d":"Saturday","v":"MONO","t":"16:50"},{"d":"Saturday","v":"SAHARA","t":"23:40"}]},{"n":"The Jump Cuts (US)","f":"The Strokes / The Walkmen","g":"garage / indie rock / rock","s":[{"d":"Thursday","v":"STALLES (FKA CENTRAAL)","t":"23:20"},{"d":"Friday","v":"REIJNGOUD","t":"23:20"}]},{"n":"the north (UK)","f":"The Strokes / Dinosaur Jr. / Wunderhorse","g":"alternative rock / indie rock / rock","s":[{"d":"Thursday","v":"ROTOWN","t":"19:20"},{"d":"Friday","v":"TR UP","t":"17:40"},{"d":"Friday","v":"ANNABEL DOWN","t":"0:10"}]},{"n":"The Paris Match (UK)","f":"The Growlers / Dave Edmunds","g":"garage / indie rock / powerpop","s":[{"d":"Friday","v":"SALSABILITY","t":"23:30"},{"d":"Saturday","v":"DE DOELEN WBH","t":"16:50"}]},{"n":"The Sewing Club (US)","f":"Letters To Cleo / Slowdive","g":"alternative rock / grunge / rock","s":[{"d":"Friday","v":"UNIEK","t":"18:20"},{"d":"Saturday","v":"TR DOWN","t":"20:00"}]},{"n":"The Slow Country (UK)","f":"Mary in the Junkyard / The War on Drugs","g":"folk / slacker rock","s":[{"d":"Friday","v":"SAHARA","t":"19:10"},{"d":"Saturday","v":"UNIEK","t":"18:20"}]},{"n":"thrilled (NL)","f":"My Bloody Valentine / Ride / Slowdive","g":"rock / shoegaze","s":[{"d":"Wednesday","v":"STALLES (FKA CENTRAAL)","t":"19:50"}]},{"n":"TOAST CLUB (UK)","f":"Parcels / Vulfpeck / Steely Dan","g":"indie pop / pop / rock","s":[{"d":"Thursday","v":"STALLES (FKA CENTRAAL)","t":"20:30"},{"d":"Saturday","v":"ARMINIUS UP","t":"18:10"},{"d":"Saturday","v":"SALSABILITY","t":"22:00"}]},{"n":"Tokyo Sea Dragons (UK)","f":"The Doors / Television / The Velvet Underground","g":"alt-pop / rock","s":[{"d":"Thursday","v":"ARMINIUS UP","t":"21:10"},{"d":"Saturday","v":"BAANHOF","t":"19:20"}]},{"n":"Tooth (UK)","f":"Dinosaur Jr / The Get Up Kids / Alvvays","g":"alternative rock / indie rock / rock","s":[{"d":"Friday","v":"TR DOWN","t":"23:20"},{"d":"Saturday","v":"ANNABEL DOWN","t":"18:10"}]},{"n":"Tough Cookie (UK)","f":"Pavement / The Strokes / The Libertines","g":"alternative rock / grunge / rock","s":[{"d":"Thursday","v":"V11","t":"20:40"},{"d":"Friday","v":"ARMINIUS DOWN","t":"20:30"}]},{"n":"Tracey Nelson (US)","f":"Townes Van Zandt / Son Volt","g":"alt-country / folk","s":[{"d":"Thursday","v":"TR FOYER","t":"20:50"},{"d":"Friday","v":"BAANHOF","t":"22:20"}]},{"n":"Trip Westerns (UK)","f":"The Growlers / The Black Lips / Foxygen","g":"alt-country / psych / rock","s":[{"d":"Thursday","v":"ANNABEL DOWN","t":"23:30"},{"d":"Friday","v":"REMASTERED","t":"19:20"}]},{"n":"TURNSPIT (UK)","f":"Fever Ray / The XX / Weval","g":"alt-rave / pop / synth pop","s":[{"d":"Thursday","v":"ANNABEL DOWN","t":"23:30"},{"d":"Friday","v":"REMASTERED","t":"19:20"}]},{"n":"Twenty One Children (ZA)","f":"Black Flag / The Germs","g":"heavy / punk / rock","s":[{"d":"Saturday","v":"REIJNGOUD","t":"17:30"},{"d":"Saturday","v":"ANNABEL DOWN","t":"22:40"}]},{"n":"Ugly Ozo (UK)","f":"Wet Leg / Garbage","g":"grunge / indie pop / rock","s":[{"d":"Thursday","v":"ANNABEL UP","t":"19:40"},{"d":"Friday","v":"UNIEK","t":"21:20"}]},{"n":"villagerrr (US)","f":"Wilco / Way Dynamic / This is Lorelei / Wednesday","g":"alt-country / folk","s":[{"d":"Thursday","v":"TR UP","t":"20:10"},{"d":"Friday","v":"ANNABEL UP","t":"17:20"}]},{"n":"Wesley & The Boys (US)","f":"The Ramones / MC5","g":"punk / rock","s":[{"d":"Thursday","v":"TR DOWN","t":"22:50"},{"d":"Friday","v":"V11","t":"18:10"}]},{"n":"What Jen Wants (UK)","f":"Been Stellar / feeble little horse / Pretty Sick / Wednesday","g":"dream pop / grunge / rock","s":[{"d":"Saturday","v":"BIRD","t":"16:00"},{"d":"Saturday","v":"MONO","t":"22:50"}]},{"n":"wing! (UK)","f":"Tricky / Boards of Canada / Beck","g":"alt-hip hop / experimental / pop","s":[{"d":"Friday","v":"REMASTERED","t":"17:50"},{"d":"Saturday","v":"BIRD","t":"22:00"}]},{"n":"Wyatt (UK)","f":"Westside Cowboy / Neil Young / Jeff Tweedy","g":"alt-country / rock","s":[{"d":"Friday","v":"V2_","t":"22:40"},{"d":"Saturday","v":"TR DOWN","t":"16:40"},{"d":"Saturday","v":"ARMINIUS UP","t":"22:40"}]},{"n":"Yoo Doo Right (CA)","f":"Neu! / Zonbi","g":"post-rock / psych / rock","s":[{"d":"Friday","v":"REMASTERED","t":"22:20"},{"d":"Saturday","v":"BIRD","t":"19:00"}]},{"n":"Zilcho Hamblin (UK)","f":"Tindersticks / The National / Alex Cameron","g":"alt-country / pop / rock","s":[{"d":"Thursday","v":"ARMINIUS UP","t":"22:40"},{"d":"Friday","v":"SALSABILITY","t":"18:40"}]}]
+</script>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ============================================================
+     1. DATA PARSING & CONSTANTS
+     ============================================================ */
+
+  const RAW = JSON.parse(document.getElementById('lotd-data').textContent);
+  const DAYS = ['Thursday', 'Friday', 'Saturday'];
+  const DAY_COLOR = { Thursday: 'var(--thu)', Friday: 'var(--fri)', Saturday: 'var(--sat)' };
+  const SET_MINUTES = 40; // every set is 40 minutes
+
+  const TICKET_DESK = { name: 'Ticket desk', addr: 'Eendrachtsplein', lat: 51.9162377, lon: 4.4733596 };
+
+  const VENUE_INFO = {
+    "ANNABEL": { name: "Annabel", addr: "Schiestraat 20", walk: 15, cap: 3, wheelchair: "partial", toilet: true, soda: 3.80, beer: 4.00, wine: 5.00, lat: 51.9253651, lon: 4.4760948 },
+    "ARMINIUS DOWN": { name: "Arminius Down", addr: "Westersingel 76", walk: 4, cap: 3, wheelchair: "partial", toilet: true, soda: 3.50, beer: 3.80, wine: 4.90, lat: 51.9150296, lon: 4.4740078 },
+    "ARMINIUS UP": { name: "Arminius Up", addr: "Museumpark 3", walk: 4, cap: 1, wheelchair: "partial", toilet: true, soda: 3.50, beer: 3.80, wine: 4.90, lat: 51.9150305, lon: 4.4740145 },
+    "BAANHOF": { name: "Baanhof", addr: "Baan 159", walk: 10, cap: 2, wheelchair: false, toilet: false, soda: 4.00, beer: 4.00, wine: 6.00, lat: 51.9130673, lon: 4.4803803 },
+    "BARRIO": { name: "Barrio", addr: "Schiestraat 18", walk: 15, cap: 2, wheelchair: false, toilet: false, soda: 3.50, beer: 3.90, wine: 5.50, lat: 51.9256862, lon: 4.4762089 },
+    "BIRD": { name: "Bird", addr: "Raampoortstraat 24", walk: 20, cap: 2, wheelchair: "partial", toilet: "partial", soda: 4.00, beer: 4.00, wine: 6.00, lat: 51.9267258, lon: 4.4788507 },
+    "DE DOELEN UP": { name: "De Doelen Up", addr: "Karel Doormanstraat 23", walk: 8, cap: 2, wheelchair: true, toilet: true, soda: 3.85, beer: 4.00, wine: 5.50, lat: 51.9227163, lon: 4.4732322 },
+    "DE DOELEN WBH": { name: "De Doelen WBH", addr: "Kruisplein 40", walk: 7, cap: 3, wheelchair: true, toilet: true, soda: 3.85, beer: 4.00, wine: 5.50, lat: 51.9217531, lon: 4.4731939 },
+    "MONO": { name: "Mono", addr: "Vijverhofstraat 15", walk: 22, cap: 1, wheelchair: true, toilet: false, soda: 3.20, beer: 3.20, wine: 4.50, lat: 51.9284739, lon: 4.4786933 },
+    "PARADIJSKERK": { name: "Paradijskerk", addr: "Nieuwe Binnenweg 25", walk: 4, cap: 2, wheelchair: true, toilet: false, soda: 3.50, beer: 3.80, wine: 4.90, lat: 51.9169789, lon: 4.4712957 },
+    "REIJNGOUD": { name: "Reijngoud", addr: "Vijverhofstraat 10", walk: 23, cap: 1, wheelchair: true, toilet: false, soda: 3.50, beer: 4.00, wine: 5.20, lat: 51.9285092, lon: 4.4780668 },
+    "REMASTERED": { name: "Remastered", addr: "Willemsplein 79", walk: 15, cap: 2, wheelchair: true, toilet: true, soda: 4.15, beer: 4.65, wine: null, lat: 51.9107682, lon: 4.4832914 },
+    "ROTOWN": { name: "Rotown", addr: "Nieuwe Binnenweg 19", walk: 3, cap: 2, wheelchair: true, toilet: true, soda: 3.50, beer: 3.80, wine: 4.90, lat: 51.9169188, lon: 4.4717793 },
+    "SAHARA": { name: "Sahara", addr: "Schiestraat 18", walk: 14, cap: 2, wheelchair: false, toilet: false, soda: 3.80, beer: 4.00, wine: 5.00, lat: 51.9256862, lon: 4.4762089 },
+    "SALSABILITY": { name: "Salsability", addr: "Schiestraat 22", walk: 15, cap: 1, wheelchair: "partial", toilet: true, soda: 3.50, beer: 4.00, wine: 5.00, lat: 51.9256032, lon: 4.4752920 },
+    "STALLES (FKA CENTRAAL)": { name: "Stalles (fka Centraal)", addr: "Westersingel 50", walk: 2, cap: 2, wheelchair: false, toilet: false, soda: 4.00, beer: 4.00, wine: 5.50, lat: 51.9172985, lon: 4.4721670 },
+    "THEATER ROTTERDAM": { name: "Theater Rotterdam", addr: "Schouwburgplein 25", walk: 5, cap: 3, wheelchair: true, toilet: true, soda: 3.60, beer: 4.00, wine: 5.50, lat: 51.9199617, lon: 4.4740668 },
+    "UNIEK": { name: "Uniek", addr: "Mauritsweg 34", walk: 3, cap: 2, wheelchair: false, toilet: false, soda: 4.00, beer: 4.00, wine: 5.50, lat: 51.9190235, lon: 4.4725376 },
+    "V11": { name: "V11", addr: "Wijnhaven 101", walk: 11, cap: 1, wheelchair: false, toilet: false, soda: 3.90, beer: 3.90, wine: 5.70, lat: 51.9170588, lon: 4.4846126 },
+    "V2_": { name: "V2_", addr: "Eendrachtsstraat 10", walk: 3, cap: 2, wheelchair: "partial", toilet: false, soda: 4.00, beer: 4.00, wine: 5.50, lat: 51.9155226, lon: 4.4763281 },
+    "WAALSE KERK": { name: "Waalse Kerk", addr: "Pierre Baylestraat 1", walk: 8, cap: 2, wheelchair: "partial", toilet: false, soda: 3.50, beer: 3.80, wine: 4.90, lat: 51.9138376, lon: 4.4799259 },
+    "WORM": { name: "WORM", addr: "Boomgaardsstraat 71", walk: 4, cap: 1, wheelchair: "partial", toilet: true, soda: 3.75, beer: 4.00, wine: 5.20, lat: 51.9156431, lon: 4.4764879 }
+  };
+
+  const VENUE_ALIAS = {
+    "ANNABEL DOWN": "ANNABEL", "ANNABEL UP": "ANNABEL", "ANNEBEL UP": "ANNABEL",
+    "TR UP": "THEATER ROTTERDAM", "TR DOWN": "THEATER ROTTERDAM", "TR FOYER": "THEATER ROTTERDAM",
+    "WORM 1": "WORM", "WORM 2": "WORM"
+  };
+
+  // A few venues share one VENUE_INFO entry but have distinct sub-rooms —
+  // this keeps that distinction visible in the display name instead of
+  // collapsing "TR UP" and "TR DOWN" into the same generic label.
+  const VENUE_ROOM_SUFFIX = {
+    "ANNABEL DOWN": "Down", "ANNABEL UP": "Up", "ANNEBEL UP": "Up",
+    "TR UP": "Up", "TR DOWN": "Down", "TR FOYER": "Foyer",
+    "WORM 1": "Room 1", "WORM 2": "Room 2"
+  };
+
+  const DARK_MAP_COLORS = { bg: '#1C1913', dot: '#F1E9D8', dotFill: 'rgba(241,233,216,0.16)', accent: '#E8B93E', textDim: '#B8AF9C' };
+  const LIGHT_MAP_COLORS = { bg: '#F4F1EA', dot: '#181614', dotFill: 'rgba(24,22,20,0.08)', accent: '#B0301A', textDim: '#666' };
+
+  const STORAGE_KEY = 'lotd2026_picks';
+  const LAYOUT_KEY = 'lotd2026_layout';
+  const BACKUP_KEY = 'lotd2026_backups';
+
+  /* ============================================================
+     2. UTILITY FUNCTIONS (Geo / Math / Formatting)
+     ============================================================ */
+
+  const escapeHtml = (s) =>
+    (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  const toMinutes = (t) => {
+    const [hStr, mStr] = t.split(':');
+    let h = parseInt(hStr, 10);
+    const m = parseInt(mStr, 10);
+    // Times like 0:10 after midnight belong to the tail end of that day's schedule
+    if (h < 4) h += 24;
+    return h * 60 + m;
+  };
+
+  const geoDist = (a, b) => {
+    const lonScale = Math.cos((a.lat + b.lat) / 2 * Math.PI / 180);
+    const dx = (a.lon - b.lon) * lonScale;
+    const dy = a.lat - b.lat;
+    return Math.sqrt(dx * dx + dy * dy);
+  };
+
+  // Number venues by real proximity, swept top-to-bottom: seed at the
+  // northernmost venue as #1, then always number whichever unvisited
+  // venue is closest to the last one numbered. This keeps nearby venues
+  // numbered close together and pushes #1 and #22 to genuinely opposite
+  // ends of the map, instead of looping back near the start.
+  function computeWalkOrder() {
+    const keys = Object.keys(VENUE_INFO);
+    const startKey = keys.reduce(
+      (best, k) => (VENUE_INFO[k].lat > VENUE_INFO[best].lat ? k : best),
+      keys[0]
+    );
+    const remaining = keys.filter((k) => k !== startKey);
+    VENUE_INFO[startKey].order = 1;
+    let current = VENUE_INFO[startKey];
+    let n = 2;
+    while (remaining.length) {
+      let bestIdx = 0;
+      let bestDist = Infinity;
+      for (let i = 0; i < remaining.length; i++) {
+        const d = geoDist(current, VENUE_INFO[remaining[i]]);
+        if (d < bestDist) { bestDist = d; bestIdx = i; }
+      }
+      const key = remaining[bestIdx];
+      VENUE_INFO[key].order = n++;
+      current = VENUE_INFO[key];
+      remaining.splice(bestIdx, 1);
+    }
+  }
+  computeWalkOrder();
+
+  function venueInfoFor(showVenue) {
+    const key = VENUE_ALIAS[showVenue] || showVenue;
+    return VENUE_INFO[key] || null;
+  }
+
+  function venueKeyFor(showVenue) {
+    return VENUE_ALIAS[showVenue] || showVenue;
+  }
+
+  function venueDisplayName(showVenue, info) {
+    if (!info) return showVenue;
+    const suffix = VENUE_ROOM_SUFFIX[showVenue];
+    return suffix ? `${info.name} (${suffix})` : info.name;
+  }
+
+  const capLabel = (cap) =>
+    cap === 3 ? 'Large capacity' : cap === 2 ? 'Medium capacity' : 'Small capacity';
+
+  const capShortLabel = (cap) =>
+    cap === 3 ? 'Large Cap' : cap === 2 ? 'Mid Cap' : 'Small Cap';
+
+  // "alt-rave" -> "Alt-rave", "indie rock" -> "Indie rock" — sentence case
+  // per tag, since these read as short labels rather than titles.
+  const titleCaseGenreTag = (g) => g.charAt(0).toUpperCase() + g.slice(1);
+
+  function genrePillsHTML(genre) {
+    if (!genre) return '';
+    return genre.split('/')
+      .map((g) => g.trim())
+      .filter(Boolean)
+      .map((g) => `<span class="genre-pill">${escapeHtml(titleCaseGenreTag(g))}</span>`)
+      .join('');
+  }
+
+  // A show marked as plan B never counts as a clash — on either side —
+  // so resolving a clash is just "pick which one is the backup".
+  function findClash(entry, dayPicks) {
+    if (isBackup(entry)) return null;
+    for (const other of dayPicks) {
+      if (other.id === entry.id) continue;
+      if (isBackup(other)) continue;
+      if (Math.abs(other.mins - entry.mins) < SET_MINUTES) return other;
+    }
+    return null;
+  }
+
+  // Every overlapping pick, ignoring plan-B status (used to explain what a
+  // backup is a backup *for*, and to swap plan A / plan B).
+  function overlappingPicks(entry, dayPicks) {
+    return dayPicks.filter((o) => o.id !== entry.id && Math.abs(o.mins - entry.mins) < SET_MINUTES);
+  }
+
+  let backups = (() => {
+    try { return JSON.parse(localStorage.getItem('lotd2026_backups') || '{}') || {}; } catch (e) { return {}; }
+  })();
+  function isBackup(entry) { return !!backups[entry.id]; }
+  function saveBackups() {
+    try { localStorage.setItem(BACKUP_KEY, JSON.stringify(backups)); } catch (e) { /* not persisted */ }
+  }
+
+  function mergeIntervals(intervals) {
+    intervals.sort((a, b) => a[0] - b[0]);
+    const merged = [];
+    intervals.forEach((iv) => {
+      const last = merged[merged.length - 1];
+      if (last && iv[0] <= last[1]) {
+        last[1] = Math.max(last[1], iv[1]);
+      } else {
+        merged.push(iv.slice());
+      }
+    });
+    return merged;
+  }
+
+  // Collision-avoidance layout for the venue map: project real lat/lon to
+  // canvas coordinates, then iteratively push overlapping circles apart
+  // while easing them back toward their true position, so nearby venues
+  // never render on top of each other but the map still reads correctly.
+  function computeVenueLayout(width, height) {
+    const keys = Object.keys(VENUE_INFO).sort((a, b) => VENUE_INFO[a].order - VENUE_INFO[b].order);
+    const lats = keys.map((k) => VENUE_INFO[k].lat).concat([TICKET_DESK.lat]);
+    const lons = keys.map((k) => VENUE_INFO[k].lon).concat([TICKET_DESK.lon]);
+    const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+    const minLon = Math.min(...lons), maxLon = Math.max(...lons);
+    const pad = 34;
+    const midLatRad = (minLat + maxLat) / 2 * Math.PI / 180;
+    const lonScale = Math.cos(midLatRad);
+    const latSpan = (maxLat - minLat) || 0.001;
+    const lonSpanEff = (maxLon - minLon) * lonScale || 0.001;
+    const scale = Math.min((width - 2 * pad) / lonSpanEff, (height - 2 * pad) / latSpan);
+    const drawW = lonSpanEff * scale, drawH = latSpan * scale;
+    const offX = pad + ((width - 2 * pad) - drawW) / 2;
+    const offY = pad + ((height - 2 * pad) - drawH) / 2;
+    const proj = (lat, lon) => [offX + (lon - minLon) * lonScale * scale, offY + (maxLat - lat) * scale];
+
+    const GAP = 3.5;
+    const nodes = keys.map((k) => {
+      const info = VENUE_INFO[k];
+      const [x, y] = proj(info.lat, info.lon);
+      const r = 8 + info.cap * 2.6;
+      return { key: k, order: info.order, name: info.name, r, x, y, origX: x, origY: y };
+    });
+    const [tdX, tdY] = proj(TICKET_DESK.lat, TICKET_DESK.lon);
+    const td = { r: 5, x: tdX, y: tdY, origX: tdX, origY: tdY };
+    const all = nodes.concat([td]);
+
+    for (let iter = 0; iter < 400; iter++) {
+      for (let i = 0; i < all.length; i++) {
+        for (let j = i + 1; j < all.length; j++) {
+          const a = all[i], b = all[j];
+          const dx = b.x - a.x, dy = b.y - a.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
+          const minDist = a.r + b.r + GAP;
+          if (dist < minDist) {
+            const move = (minDist - dist) / 2;
+            const ux = dx / dist, uy = dy / dist;
+            a.x -= ux * move; a.y -= uy * move;
+            b.x += ux * move; b.y += uy * move;
+          }
+        }
+      }
+      all.forEach((n) => {
+        n.x += (n.origX - n.x) * 0.015;
+        n.y += (n.origY - n.y) * 0.015;
+        n.x = Math.max(n.r + 4, Math.min(width - n.r - 4, n.x));
+        n.y = Math.max(n.r + 4, Math.min(height - n.r - 4, n.y));
+      });
+    }
+
+    return { nodes, td };
+  }
+
+  /* ============================================================
+     3. STORAGE & URL MANAGEMENT
+     ============================================================ */
+
+  function loadPicks() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function savePicks(picksToSave) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(picksToSave));
+    } catch (e) { /* storage unavailable — picks just won't persist */ }
+  }
+
+  // Older versions stored one flag per showtime, keyed "actIdx-showIdx".
+  // Collapse any of those into the current per-artist format (keyed by
+  // actIdx, value "want"/"must") so nothing gets lost on upgrade.
+  function migratePicks(raw) {
+    const out = {};
+    let changed = false;
+    Object.keys(raw).forEach((key) => {
+      if (key.includes('-')) {
+        const actIdx = key.split('-')[0];
+        if (!out[actIdx]) out[actIdx] = 'want';
+        changed = true;
+      } else {
+        out[key] = raw[key] === 'must' ? 'must' : 'want';
+      }
+    });
+    return { picks: out, changed };
+  }
+
+  // A shared link can carry picks in ?picks=actIdx:priority,actIdx:priority
+  // — if present, ask before loading them so it never silently overwrites
+  // the visitor's own list, then strip the param so a refresh won't re-prompt.
+  function loadSharedPicksFromURL() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const raw = params.get('picks');
+      if (!raw) return null;
+
+      const shared = {};
+      let count = 0;
+      raw.split(',').forEach((pair) => {
+        const [actIdx, priRaw] = pair.split(':');
+        const pri = priRaw === 'must' ? 'must' : 'want';
+        if (RAW[actIdx]) { shared[actIdx] = pri; count++; }
+      });
+
+      window.history.replaceState({}, '', window.location.origin + window.location.pathname);
+
+      if (!count) return null;
+      const ok = confirm(
+        `This link includes a shared list of ${count} picks. Load them into your planner? (Replaces your current picks, if any.)`
+      );
+      return ok ? shared : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /* ============================================================
+     4. HTML TEMPLATE GENERATORS
+     ============================================================ */
+
+  function capBadgeHTML(info) {
+    if (!info) return '';
+    return `<span class="cap-badge-text" title="${capLabel(info.cap)}">${capShortLabel(info.cap)}</span>`;
+  }
+
+  function venueNumTagHTML(info) {
+    if (!info) return '';
+    return `<span class="venue-num-tag">(#${info.order})</span>`;
+  }
+
+  function buildVenueSVG(width, height, colors) {
+    const { nodes, td } = computeVenueLayout(width, height);
+    const font = 'Space Grotesk, sans-serif';
+    let svg = `<svg viewBox="0 0 ${width} ${height}" class="venue-map" xmlns="http://www.w3.org/2000/svg">`;
+    svg += `<rect x="0" y="0" width="${width}" height="${height}" fill="${colors.bg}" rx="4"/>`;
+    // Ticket desk marker only — its label lives in a legend below the map
+    // instead of floating text, which used to land on top of nearby circles.
+    svg += `<circle cx="${td.x.toFixed(1)}" cy="${td.y.toFixed(1)}" r="5" fill="${colors.accent}"><title>Ticket desk</title></circle>`;
+    nodes.forEach((n) => {
+      const info = VENUE_INFO[n.key];
+      svg += `<g class="venue-node" data-key="${escapeHtml(n.key)}" tabindex="0" role="button" aria-label="${escapeHtml(n.name)}, venue number ${n.order}">`;
+      svg += `<title>${escapeHtml(n.name)} — ${info.walk} min walk</title>`;
+      svg += `<circle cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="${n.r.toFixed(1)}" fill="${colors.dotFill}" stroke="${colors.dot}" stroke-width="1.3"/>`;
+      svg += `<text x="${n.x.toFixed(1)}" y="${(n.y + 3.5).toFixed(1)}" font-size="10.5" font-weight="700" font-family="${font}" fill="${colors.dot}" text-anchor="middle">${n.order}</text>`;
+      svg += '</g>';
+    });
+    svg += '</svg>';
+    return svg;
+  }
+
+  function buildVenueTableRows() {
+    return Object.keys(VENUE_INFO)
+      .sort((a, b) => VENUE_INFO[a].order - VENUE_INFO[b].order)
+      .map((k) => ({ key: k, v: VENUE_INFO[k] }));
+  }
+
+  function buildVenueTableHTML() {
+    const rows = buildVenueTableRows()
+      .map(({ key, v }) => `
+        <tr class="venue-table-row" data-key="${escapeHtml(key)}">
+          <td class="vt-num">${v.order}</td>
+          <td class="vt-name">${escapeHtml(v.name)}</td>
+          <td>${escapeHtml(v.addr)}</td>
+          <td>${capBadgeHTML(v)}</td>
+        </tr>`)
+      .join('');
+    return `
+      <div class="venue-table-wrap">
+        <table class="venue-table">
+          <thead><tr><th>#</th><th>Venue</th><th>Address</th><th>Capacity</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  }
+
+  function renderVenuesView(selectedKey) {
+    const svg = buildVenueSVG(600, 560, DARK_MAP_COLORS);
+    return `
+      <div class="venues-view">
+        <div class="venue-map-wrap">${svg}</div>
+        <div class="venue-legend"><span class="legend-dot ticket-desk-dot"></span> Ticket desk</div>
+        <div id="venueDetail">${venueDetailHTML(selectedKey)}</div>
+        ${buildVenueTableHTML()}
+      </div>`;
+  }
+
+  function actsAtVenueKey(key) {
+    const info = VENUE_INFO[key];
+    if (!info) return [];
+    return entries
+      .filter((e) => e.venueInfo === info && e.venueKey === key)
+      .sort((a, b) => DAYS.indexOf(a.day) - DAYS.indexOf(b.day) || a.mins - b.mins);
+  }
+
+  function venueDetailHTML(key) {
+    if (!key || !VENUE_INFO[key]) {
+      return `<p class="venue-detail-hint">Tap a venue on the map — or a row in the table below — to see who's playing there and how far it is from the ticket desk.</p>`;
+    }
+    const info = VENUE_INFO[key];
+    const acts = actsAtVenueKey(key);
+    const actsHTML = acts.length
+      ? acts.map((e) => `
+          <div class="vd-act">
+            <span class="vd-day">${e.day.slice(0, 3)}</span>
+            <span class="vd-time">${e.time}</span>
+            <span class="vd-name">${escapeHtml(e.name)}</span>
+          </div>`).join('')
+      : '<div class="vd-empty">No acts playing here on your ticketed days.</div>';
+    return `
+      <div class="venue-detail">
+        <div class="vd-header">
+          <span class="venue-num-tag">#${info.order}</span>
+          <span class="vd-name-big">${escapeHtml(info.name)}</span>
+          ${capBadgeHTML(info)}
+        </div>
+        <div class="vd-walk">${info.walk} min walk from the ticket desk · ${escapeHtml(info.addr)}</div>
+        <div class="vd-acts">${actsHTML}</div>
+      </div>`;
+  }
+
+  function rowHTML(entry, clashWith, { picks, state, showCountByAct }) {
+    const priority = picks[entry.actIdx] || null;
+    const isStarred = !!priority;
+    const isOpen = !!state.open[entry.id];
+    const classes = [
+      'row',
+      isStarred && 'starred',
+      priority === 'must' && 'must',
+      isOpen && 'open',
+      isStarred && isBackup(entry) && 'backup',
+      clashWith && 'clash'
+    ].filter(Boolean).join(' ');
+
+    const showCount = showCountByAct.get(entry.actIdx) || 1;
+    const showCountHTML = showCount > 1 ? `<span class="show-count">· ${showCount} shows</span>` : '';
+    const starIcon = priority === 'must' ? '★' : '☆';
+    const starLabel = priority === 'must'
+      ? 'Must-see — tap for want-to-see'
+      : priority === 'want'
+        ? 'Want to see — tap for must-see'
+        : 'Tap to add to want-to-see';
+
+    const displayVenue = venueDisplayName(entry.venue, entry.venueInfo);
+    const venueLine = entry.venueInfo
+      ? `
+        <div class="venue-line">
+          <span class="venue-pin">📍</span>
+          <span class="venue-name">${escapeHtml(displayVenue)}</span>
+          ${venueNumTagHTML(entry.venueInfo)}
+          <span class="venue-sep">•</span>
+          ${capBadgeHTML(entry.venueInfo)}
+        </div>`
+      : `<div class="venue-line"><span class="venue-pin">📍</span><span class="venue-name">${escapeHtml(entry.venue)}</span></div>`;
+
+    const genreLine = entry.genre || showCount > 1
+      ? `<div class="genre-line">${genrePillsHTML(entry.genre)}${showCountHTML}</div>`
+      : '';
+
+    const fansLine = entry.fansOf
+      ? `<b>For fans of:</b> ${escapeHtml(entry.fansOf)}`
+      : 'No "for fans of" listed.';
+
+    const clashLine = clashWith
+      ? `<div class="clash-note">Clashes with ${escapeHtml(clashWith.name)} at ${clashWith.venue} (${clashWith.time})</div>`
+      : '';
+
+    const removeLine = isStarred
+      ? `<button class="remove-pick-btn" data-actidx="${entry.actIdx}">Remove from picks</button>`
+      : '';
+
+    return `
+      <div class="${classes}" data-id="${entry.id}" data-actidx="${entry.actIdx}">
+        <div class="time">${entry.time}</div>
+        <div class="info">
+          <div class="name-line"><span class="name">${escapeHtml(entry.name)}</span>${isStarred && isBackup(entry) ? '<span class="plan-b-tag">Plan B</span>' : ''}</div>
+          ${venueLine}
+          ${genreLine}
+          <div class="fans">${fansLine}</div>
+          ${clashLine}
+          ${resolveHTML(entry)}
+          ${removeLine}
+        </div>
+        <button class="star-btn" aria-label="${starLabel}" title="${starLabel}">${starIcon}</button>
+      </div>`;
+  }
+
+  function buildClashDay(day, dayPicks, picks) {
+    const venues = {};
+    dayPicks.forEach((e) => {
+      (venues[e.venue] = venues[e.venue] || []).push(e);
+    });
+    const venueNames = Object.keys(venues).sort((a, b) => {
+      const minA = Math.min(...venues[a].map((x) => x.mins));
+      const minB = Math.min(...venues[b].map((x) => x.mins));
+      return minA - minB;
+    });
+
+    const allMins = dayPicks.map((e) => e.mins);
+    const minStart = Math.min(...allMins) - 25;
+    const maxEnd = Math.max(...allMins.map((m) => m + SET_MINUTES)) + 15;
+    const totalSpan = maxEnd - minStart;
+
+    // Every 40-minute block gets a guaranteed minimum pixel width,
+    // regardless of how many hours the day spans — names stay readable
+    // and a wide day just scrolls further instead of squeezing blocks.
+    const MIN_BLOCK_PX = 76;
+    const pxPerMinute = MIN_BLOCK_PX / SET_MINUTES;
+    const timelineWidth = Math.max(360, Math.round(totalSpan * pxPerMinute));
+
+    const rowH = 44, headerH = 20;
+    const gridHeight = headerH + venueNames.length * rowH;
+
+    const firstHour = Math.ceil(minStart / 60);
+    const lastHour = Math.floor(maxEnd / 60);
+    const hourMarks = [];
+    for (let h = firstHour; h <= lastHour; h++) hourMarks.push(h);
+
+    let labelsHTML = `<div style="height:${headerH}px;"></div>`;
+    venueNames.forEach((vn, vi) => {
+      labelsHTML += `<div class="clash-venue-label" style="top:${headerH + vi * rowH}px; height:${rowH}px;">${escapeHtml(vn)}</div>`;
+    });
+
+    let linesHTML = '';
+    hourMarks.forEach((h) => {
+      const pct = ((h * 60 - minStart) / totalSpan * 100).toFixed(2);
+      const label = `${String(h % 24).padStart(2, '0')}:00`;
+      linesHTML += `<div class="clash-hourline" style="left:${pct}%; top:${headerH}px; height:${gridHeight - headerH}px;"></div>`;
+      linesHTML += `<div class="clash-hourlabel" style="left:${pct}%;">${label}</div>`;
+    });
+
+    let rowsHTML = '';
+    venueNames.forEach((vn, vi) => {
+      const top = headerH + vi * rowH;
+      if (vi % 2 === 0) rowsHTML += `<div class="clash-row-bg" style="top:${top}px; height:${rowH}px;"></div>`;
+    });
+
+    // Shade the whole time window behind any overlapping picks, spanning
+    // every venue row, so a clash is visible at a glance before reading
+    // any block.
+    const clashingIntervals = dayPicks
+      .filter((e) => !!findClash(e, dayPicks))
+      .map((e) => [e.mins, e.mins + SET_MINUTES]);
+    const bandsHTML = mergeIntervals(clashingIntervals)
+      .map((iv) => {
+        const left = ((iv[0] - minStart) / totalSpan * 100).toFixed(2);
+        const width = ((iv[1] - iv[0]) / totalSpan * 100).toFixed(2);
+        return `<div class="clash-band" style="left:${left}%; width:${width}%; top:${headerH}px; height:${gridHeight - headerH}px;"></div>`;
+      })
+      .join('');
+
+    let blocksHTML = '';
+    venueNames.forEach((vn, vi) => {
+      const top = headerH + vi * rowH;
+      venues[vn].forEach((e) => {
+        const left = ((e.mins - minStart) / totalSpan * 100).toFixed(2);
+        const width = (SET_MINUTES / totalSpan * 100).toFixed(2);
+        const clash = findClash(e, dayPicks);
+        const priority = picks[e.actIdx];
+        const isMust = priority === 'must';
+        blocksHTML += `
+          <div class="clash-block${clash ? ' clash' : ''}${isMust ? ' must' : ''}${isBackup(e) ? ' backup' : ''}" data-id="${e.id}" data-actidx="${e.actIdx}"
+               style="left:${left}%; width:${width}%; top:${top + 3}px; height:${rowH - 6}px;"
+               title="${escapeHtml(e.name)} — ${e.time} at ${escapeHtml(vn)}${clash ? ` (clashes with ${escapeHtml(clash.name)})` : ''}">
+            <span class="cb-time">${e.time}</span><span class="cb-name">${isBackup(e) ? 'B · ' : isMust ? '★ ' : ''}${escapeHtml(e.name)}</span>
+          </div>`;
+      });
+    });
+
+    return `
+      <div class="clash-day">
+        <div class="clash-day-title">${day}</div>
+        <div class="clash-day-body">
+          <div class="clash-venue-col" style="height:${gridHeight}px;">${labelsHTML}</div>
+          <div class="clash-timeline-wrap">
+            <div class="clash-timeline" style="height:${gridHeight}px; width:${timelineWidth}px;">${rowsHTML}${bandsHTML}${linesHTML}${blocksHTML}</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function renderShareView(picks) {
+    const pickIds = Object.keys(picks);
+    const base = window.location.origin + window.location.pathname;
+    const pairs = pickIds.map((actIdx) => `${actIdx}:${picks[actIdx]}`);
+    const pickUrl = `${base}?picks=${encodeURIComponent(pairs.join(','))}`;
+
+    const withPicksBlock = pickIds.length
+      ? `
+        <p class="share-note">Whoever opens this link gets asked before it loads your ${pickIds.length} picks — it won't overwrite anything they've already starred without asking.</p>
+        <div class="share-url-row">
+          <input type="text" readonly value="${escapeHtml(pickUrl)}" id="pickUrlInput">
+          <button class="share-copy-btn" data-target="pickUrlInput">Copy</button>
+        </div>`
+      : `<p class="share-note">Star some acts first — this link will carry your exact picks so whoever opens it can load the same list.</p>`;
+
+    return `
+      <div class="share-view">
+        <div class="share-block">
+          <h3>Share with your picks${pickIds.length ? ` (${pickIds.length})` : ''}</h3>
+          ${withPicksBlock}
+        </div>
+        <div class="share-block">
+          <h3>Share blank</h3>
+          <p class="share-note">Same planner, nothing pre-loaded — good for sending to someone building their own list from scratch.</p>
+          <div class="share-url-row">
+            <input type="text" readonly value="${escapeHtml(base)}" id="blankUrlInput">
+            <button class="share-copy-btn" data-target="blankUrlInput">Copy</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function buildPrintVenueTableHTML() {
+    const rows = buildVenueTableRows()
+      .map(({ v }) => `
+        <tr>
+          <td>${v.order}</td>
+          <td><b>${escapeHtml(v.name)}</b><br><span style="color:#777">${escapeHtml(v.addr)}</span></td>
+          <td>${v.cap}/3</td>
+        </tr>`)
+      .join('');
+    return `<table class="p-venue-table"><thead><tr><th>#</th><th>Venue</th><th>Cap</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  function buildPrintDoc({ picks, presentDays, pickedEntriesForDay }) {
+    const starredCount = Object.keys(picks).length;
+    let schedule = '';
+
+    if (starredCount === 0) {
+      schedule = '<p class="p-empty">No picks starred yet — star some acts first, then come back to print.</p>';
+    } else {
+      presentDays.forEach((d) => {
+        const dayPicks = pickedEntriesForDay(d);
+        if (!dayPicks.length) return;
+        dayPicks.sort((a, b) => a.mins - b.mins);
+        schedule += `<div class="p-day">${d}</div>`;
+        dayPicks.forEach((e) => {
+          const clash = findClash(e, dayPicks);
+          const isMust = picks[e.actIdx] === 'must';
+          schedule += `
+            <div class="p-row">
+              <div class="p-time">${e.time}</div>
+              <div>
+                <div>${isMust ? '<span class="p-must">★</span> ' : ''}<span class="p-name">${escapeHtml(e.name)}</span>${isBackup(e) ? ' <span class="p-venue">(plan B)</span>' : ''} — <span class="p-venue">${escapeHtml(venueDisplayName(e.venue, e.venueInfo))}</span>${e.venueInfo ? ` <span class="p-num">#${e.venueInfo.order}</span>` : ''}</div>
+                ${clash ? `<div class="p-clash">Clashes with ${escapeHtml(clash.name)} (${clash.time}, ${clash.venue})</div>` : ''}
+              </div>
+            </div>`;
+        });
+      });
+    }
+
+    const venueGuide = `
+      <h2>Venue guide</h2>
+      <div class="p-map-wrap">${buildVenueSVG(400, 400, LIGHT_MAP_COLORS)}</div>
+      ${buildPrintVenueTableHTML()}`;
+
+    return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+      <title>Left of the Dial 2026 — My picks</title><style>
+      @page{size:landscape;margin:12mm;}
+      *{box-sizing:border-box;}
+      body{font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;color:#111;background:#fff;margin:0;padding:20px 24px;}
+      h1{font-size:21px;margin:0 0 2px;}
+      h2{font-size:15px;margin:0 0 8px;}
+      .sub{font-size:11.5px;color:#555;margin:0 0 16px;}
+      .print-layout{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:start;}
+      .col-left, .col-right{min-width:0;}
+      .p-day{font-size:14px;font-weight:700;margin:14px 0 6px;padding-bottom:4px;border-bottom:1px solid #999;break-after:avoid;}
+      .p-day:first-child{margin-top:0;}
+      .p-row{display:flex;gap:10px;padding:5px 0;border-bottom:1px solid #ddd;font-size:12.5px;break-inside:avoid;}
+      .p-time{width:44px;font-weight:700;flex-shrink:0;font-variant-numeric:tabular-nums;}
+      .p-name{font-weight:600;}
+      .p-must{color:#B0301A;font-weight:700;}
+      .p-venue{color:#555;}
+      .p-num{color:#999;font-weight:600;}
+      .p-clash{color:#B0301A;font-size:11px;margin-top:2px;}
+      .p-empty{font-size:13px;color:#555;}
+      .p-map-wrap{max-width:100%;margin-bottom:10px;}
+      .p-map-wrap svg{width:100%;height:auto;max-width:340px;display:block;}
+      .p-venue-note{font-size:10px;color:#666;line-height:1.45;margin:0 0 10px;}
+      table.p-venue-table{border-collapse:collapse;width:100%;font-size:9.5px;}
+      table.p-venue-table th,table.p-venue-table td{text-align:left;padding:3px 4px;border-bottom:1px solid #ddd;vertical-align:top;}
+      table.p-venue-table th{color:#555;font-weight:600;font-size:9px;}
+      .hint{margin-top:18px;font-size:11px;color:#888;}
+      @media print{.hint{display:none;}}
+      </style></head><body>
+      <h1>Left of the Dial 2026 — My picks</h1>
+      <p class="sub">21–24 October 2026 · Rotterdam</p>
+      <div class="print-layout">
+        <div class="col-left">${schedule}</div>
+        <div class="col-right">${venueGuide}</div>
+      </div>
+      <p class="hint">Press Cmd/Ctrl+P to print — choose Landscape orientation for the best fit.</p>
+      </body></html>`;
+  }
+
+  /* ============================================================
+     5. STATE MANAGEMENT & CORE RENDER LOOP
+     ============================================================ */
+
+  // Flatten into per-show entries, one row per (act, show).
+  // No tickets for Wednesday, so those sets are dropped entirely — any
+  // act that only played Wednesday simply won't appear anywhere.
+  const entries = [];
+  RAW.forEach((act, idx) => {
+    act.s.forEach((show, si) => {
+      if (show.d === 'Wednesday') return;
+      entries.push({
+        id: `${idx}-${si}`,
+        actIdx: idx,
+        name: act.n,
+        fansOf: act.f,
+        genre: act.g,
+        day: show.d,
+        venue: show.v,
+        venueInfo: venueInfoFor(show.v),
+        venueKey: venueKeyFor(show.v),
+        time: show.t,
+        mins: toMinutes(show.t)
+      });
+    });
+  });
+
+  // Precomputed once instead of re-scanning `entries` for every row on
+  // every render — O(1) lookups instead of an O(n) reduce per row.
+  const showCountByAct = new Map();
+  entries.forEach((e) => showCountByAct.set(e.actIdx, (showCountByAct.get(e.actIdx) || 0) + 1));
+
+  const presentDays = DAYS.filter((d) => entries.some((e) => e.day === d));
+
+  const genreSet = new Set();
+  RAW.forEach((act) => {
+    if (!act.g) return;
+    act.g.split('/').forEach((g) => genreSet.add(g.trim()));
+  });
+  const genres = [...genreSet].sort();
+
+  const state = {
+    day: presentDays[0],
+    query: '',
+    genre: '',
+    view: 'day', // 'day' | 'picks' | 'venues' | 'clash' | 'share'
+    open: {},
+    selectedVenue: null,
+    layout: (() => {
+      try { return localStorage.getItem(LAYOUT_KEY) === 'grid' ? 'grid' : 'list'; } catch (e) { return 'list'; }
+    })(),
+    ttSelected: null // entry id of the timetable block whose popover is open
+  };
+
+  let picks = loadPicks();
+  const migrated = migratePicks(picks);
+  if (migrated.changed) {
+    picks = migrated.picks;
+    savePicks(picks);
+  }
+  const sharedPicks = loadSharedPicksFromURL();
+  if (sharedPicks) {
+    picks = sharedPicks;
+    savePicks(picks);
+  }
+
+  const isEntryPicked = (e) => !!picks[e.actIdx];
+
+  function removePick(actIdx) {
+    delete picks[actIdx];
+    Object.keys(backups).forEach((id) => { if (id.split('-')[0] === String(actIdx)) delete backups[id]; });
+    savePicks(picks);
+    saveBackups();
+  }
+
+  function setBackup(entryId) {
+    backups[entryId] = true;
+    saveBackups();
+  }
+
+  // "This one is plan A": un-backup it and push every overlapping pick to plan B.
+  function setPrimary(entryId) {
+    const entry = entries.find((e) => e.id === entryId);
+    if (!entry) return;
+    delete backups[entryId];
+    overlappingPicks(entry, pickedEntriesForDay(entry.day)).forEach((o) => { backups[o.id] = true; });
+    saveBackups();
+  }
+
+  // Other shows by the same act, flagged when they'd fit without a clash —
+  // with 2–3 shows per act, often the real fix is just catching another one.
+  function otherShowsHTML(entry) {
+    const others = entries.filter((o) => o.actIdx === entry.actIdx && o.id !== entry.id);
+    if (!others.length) return '';
+    const parts = others.map((o) => {
+      const free = !overlappingPicks(o, pickedEntriesForDay(o.day)).some((x) => x.actIdx !== o.actIdx && !isBackup(x));
+      return `${o.day.slice(0, 3)} ${o.time} at ${escapeHtml(venueDisplayName(o.venue, o.venueInfo))}${free ? ' <span class="ok">· no clash</span>' : ''}`;
+    });
+    return `<div class="other-shows">Also plays: ${parts.join('; ')}</div>`;
+  }
+
+  // Shared plan-A/plan-B block for list rows and both popovers.
+  function resolveHTML(entry) {
+    if (!picks[entry.actIdx]) return '';
+    const dayPicks = pickedEntriesForDay(entry.day);
+    const overlaps = overlappingPicks(entry, dayPicks);
+    if (!overlaps.length && !isBackup(entry)) return '';
+    const names = overlaps.map((o) => `<b>${escapeHtml(o.name)}</b>`).join(', ');
+    let note, actions;
+    if (isBackup(entry)) {
+      note = `<div class="resolve-note">Plan B${overlaps.length ? ` — backup for ${names}` : ''}.</div>`;
+      actions = `<button class="resolve-btn" data-resolve="primary" data-id="${entry.id}">Make this plan A</button>`;
+    } else {
+      const unresolved = overlaps.filter((o) => !isBackup(o));
+      if (!unresolved.length) {
+        note = `<div class="resolve-note">Plan A. ${names} ${overlaps.length > 1 ? 'are your backups' : 'is your plan B'}.</div>`;
+        actions = `<button class="resolve-btn" data-resolve="backup" data-id="${entry.id}">Make this plan B instead</button>`;
+      } else {
+        note = `<div class="resolve-note warn">Overlaps with ${unresolved.map((o) => `<b>${escapeHtml(o.name)}</b> (${o.time})`).join(', ')}.</div>`;
+        actions = `<button class="resolve-btn" data-resolve="primary" data-id="${entry.id}">This is plan A</button>
+          <button class="resolve-btn" data-resolve="backup" data-id="${entry.id}">This is plan B</button>`;
+      }
+    }
+    return `<div class="resolve-box">${note}${otherShowsHTML(entry)}<div class="resolve-actions">${actions}</div></div>`;
+  }
+  // Once an act is starred, tapping the star only toggles between the two
+  // priority levels — it never silently drops back to unstarred, so you
+  // can't lose a pick by cycling past "must". Removing a pick entirely is
+  // a separate, explicit action (the "Remove from picks" link once a
+  // starred row is expanded, or a Clash finder block).
+  const cyclePriority = (current) => {
+    if (!current) return 'want';
+    return current === 'want' ? 'must' : 'want';
+  };
+  const pickedEntriesForDay = (day) => entries.filter((e) => isEntryPicked(e) && e.day === day);
+  const matchesFilter = (e) => {
+    if (state.genre && !(e.genre || '').includes(state.genre)) return false;
+    if (state.query) {
+      const haystack = `${e.name} ${e.fansOf} ${e.genre} ${e.venue}`.toLowerCase();
+      if (!haystack.includes(state.query)) return false;
+    }
+    return true;
+  };
+
+  function clashPopoverContentHTML(entry) {
+    const dayPicks = pickedEntriesForDay(entry.day);
+    const clash = findClash(entry, dayPicks);
+    const priority = picks[entry.actIdx];
+    const displayVenue = venueDisplayName(entry.venue, entry.venueInfo);
+    return `
+      <button class="clash-popover-close" aria-label="Close">×</button>
+      <div class="cd-header">
+        <span class="cd-name-big">${priority === 'must' ? '★ ' : ''}${escapeHtml(entry.name)}</span>
+      </div>
+      <div class="cd-meta">${entry.day} · ${entry.time} · ${escapeHtml(displayVenue)}${entry.venueInfo ? ` (#${entry.venueInfo.order})` : ''}</div>
+      ${resolveHTML(entry)}
+      <button class="cd-remove-btn" data-actidx="${entry.actIdx}">Remove from picks</button>`;
+  }
+
+  function renderClashView() {
+    const daysWithPicks = presentDays.filter((d) => pickedEntriesForDay(d).length > 0);
+    if (!daysWithPicks.length) {
+      return '<div class="empty">No picks yet — star some acts first and they\'ll show up here laid out by venue and time, clash-style.</div>';
+    }
+    let html = '<div class="clash-view"><p class="clash-note">Gold fill = must-see, green border = clear, red border and shaded column = unresolved clash, dashed = plan B. Tap a block to pick plan A.</p>';
+    daysWithPicks.forEach((d) => {
+      html += buildClashDay(d, pickedEntriesForDay(d), picks);
+    });
+    html += '</div>';
+    return html;
+  }
+
+
+  /* ---------- Timetable (full-day grid: venues across, time down) ---------- */
+
+  const PX_PER_MIN = 1.7;
+  const fmtMins = (m) => `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+
+  function buildTimetable(day) {
+    const dayEntries = entries.filter((e) => e.day === day);
+    if (!dayEntries.length) return `<div class="empty">No sets on ${day}.</div>`;
+
+    const narrow = window.innerWidth < 520;
+    const COL_W = narrow ? 100 : 118;
+    const TIME_W = narrow ? 42 : 50;
+
+    // One column per actual room (TR Up and TR Down stay separate),
+    // ordered by the same walking-route numbers used on the map.
+    const venueOrder = (v) => (venueInfoFor(v) ? venueInfoFor(v).order : 99);
+    const venues = [...new Set(dayEntries.map((e) => e.venue))].sort(
+      (a, b) => venueOrder(a) - venueOrder(b) || a.localeCompare(b)
+    );
+    const colOf = new Map(venues.map((v, i) => [v, i]));
+
+    const start = Math.floor(Math.min(...dayEntries.map((e) => e.mins)) / 60) * 60;
+    const end = Math.ceil(Math.max(...dayEntries.map((e) => e.mins + SET_MINUTES)) / 60) * 60;
+    const height = Math.round((end - start) * PX_PER_MIN);
+    const canvasW = venues.length * COL_W;
+
+    const dayPicks = pickedEntriesForDay(day);
+    const filtering = !!(state.query || state.genre);
+    let matchCount = 0;
+
+    const headHTML = venues.map((v) => {
+      const info = venueInfoFor(v);
+      return `<div class="tt-venue" style="width:${COL_W}px">
+        <span class="tt-venue-name">${escapeHtml(venueDisplayName(v, info))}</span>
+        ${info ? `<span class="tt-venue-num">#${info.order}</span>` : ''}
+      </div>`;
+    }).join('');
+
+    let hoursHTML = '';
+    for (let m = start; m < end; m += 60) {
+      hoursHTML += `<div class="tt-hour" style="top:${Math.round((m - start) * PX_PER_MIN)}px">${fmtMins(m)}</div>`;
+    }
+
+    const blocksHTML = dayEntries.map((e) => {
+      const pri = picks[e.actIdx] || null;
+      const clash = pri ? findClash(e, dayPicks) : null;
+      const matches = matchesFilter(e);
+      if (filtering && matches) matchCount++;
+      const cls = [
+        'tt-block',
+        pri && 'picked',
+        pri === 'must' && 'must',
+        clash && 'clash',
+        pri && isBackup(e) && 'backup',
+        filtering && !matches && 'dim',
+        state.ttSelected === e.id && 'selected'
+      ].filter(Boolean).join(' ');
+      const top = Math.round((e.mins - start) * PX_PER_MIN) + 2;
+      const h = Math.round(SET_MINUTES * PX_PER_MIN) - 4;
+      const left = colOf.get(e.venue) * COL_W + 3;
+      const star = pri && isBackup(e) ? 'B · ' : pri === 'must' ? '★ ' : pri ? '☆ ' : '';
+      const label = `${e.name}, ${e.time} at ${venueDisplayName(e.venue, e.venueInfo)}${pri ? `, ${pri === 'must' ? 'must-see' : 'want to see'}` : ''}${clash ? `, clashes with ${clash.name}` : ''}`;
+      return `<div class="${cls}" role="button" tabindex="0" data-id="${e.id}" data-actidx="${e.actIdx}"
+          aria-label="${escapeHtml(label)}"
+          style="top:${top}px;left:${left}px;width:${COL_W - 7}px;height:${h}px">
+          <span class="tb-time">${e.time}–${fmtMins(e.mins + SET_MINUTES)}</span>
+          <span class="tb-name">${star}${escapeHtml(e.name)}</span>
+        </div>`;
+    }).join('');
+
+    const metaLeft = filtering
+      ? (matchCount ? `${matchCount} matching set${matchCount === 1 ? '' : 's'} highlighted` : 'Nothing matches — showing the full day')
+      : `${dayEntries.length} sets · ${venues.length} rooms · tap a set to star it`;
+
+    return `
+      <div class="tt-meta">
+        <span>${metaLeft}</span>
+        <span class="tt-legend">
+          <span><i class="lg-want"></i>Want</span>
+          <span><i class="lg-must"></i>Must-see</span>
+          <span><i class="lg-clash"></i>Clash</span>
+          <span><i class="lg-backup"></i>Plan B</span>
+        </span>
+      </div>
+      <div class="tt-scroll" data-day="${day}" style="--tt-day:${DAY_COLOR[day]}">
+        <div class="tt" style="width:${TIME_W + canvasW}px">
+          <div class="tt-head">
+            <div class="tt-corner" style="width:${TIME_W}px"></div>
+            ${headHTML}
+          </div>
+          <div class="tt-body">
+            <div class="tt-times" style="width:${TIME_W}px;height:${height}px">${hoursHTML}</div>
+            <div class="tt-canvas" style="width:${canvasW}px;height:${height}px;--tt-hour:${Math.round(60 * PX_PER_MIN)}px;--tt-col:${COL_W}px">
+              ${blocksHTML}
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function timetablePopoverHTML(entry) {
+    const pri = picks[entry.actIdx] || null;
+    const clash = pri ? findClash(entry, pickedEntriesForDay(entry.day)) : null;
+    const info = entry.venueInfo;
+    const showCount = showCountByAct.get(entry.actIdx) || 1;
+    return `
+      <button class="clash-popover-close" aria-label="Close">×</button>
+      <div class="cd-header"><span class="cd-name-big">${escapeHtml(entry.name)}</span></div>
+      <div class="cd-meta">${entry.day} · ${entry.time}–${fmtMins(entry.mins + SET_MINUTES)} · ${escapeHtml(venueDisplayName(entry.venue, info))}${info ? ` (#${info.order})` : ''}</div>
+      ${entry.genre ? `<div class="tp-pills">${genrePillsHTML(entry.genre)}</div>` : ''}
+      ${entry.fansOf ? `<div class="tp-fans"><b>For fans of:</b> ${escapeHtml(entry.fansOf)}</div>` : ''}
+      ${showCount > 1 ? `<div class="tp-fans">Plays ${showCount} times this weekend — a star covers every show.</div>` : ''}
+      ${resolveHTML(entry)}
+      <div class="tp-actions">
+        <button class="tp-btn tp-want${pri === 'want' ? ' active' : ''}" data-pri="want" data-actidx="${entry.actIdx}">☆ Want to see</button>
+        <button class="tp-btn tp-must${pri === 'must' ? ' active' : ''}" data-pri="must" data-actidx="${entry.actIdx}">★ Must-see</button>
+        ${pri ? `<button class="tp-btn tp-remove" data-actidx="${entry.actIdx}">Remove</button>` : ''}
+      </div>`;
+  }
+
+  /* ---------- Now / Next ---------- */
+
+  // Festival nights: sets after midnight belong to the evening before.
+  const FESTIVAL_DATES = { '2026-10-22': 'Thursday', '2026-10-23': 'Friday', '2026-10-24': 'Saturday' };
+
+  function amsterdamNow() {
+    try {
+      const parts = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Europe/Amsterdam', year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+      }).formatToParts(new Date()).map((p) => [p.type, p.value]));
+      let h = parseInt(parts.hour, 10);
+      const m = parseInt(parts.minute, 10);
+      let d = new Date(Date.UTC(+parts.year, +parts.month - 1, +parts.day));
+      if (h < 4) { d = new Date(d.getTime() - 86400000); h += 24; }
+      return { date: d.toISOString().slice(0, 10), mins: h * 60 + m, clock: `${parts.hour}:${parts.minute}`, today: `${parts.year}-${parts.month}-${parts.day}` };
+    } catch (e) {
+      return { date: '', mins: 0, clock: '', today: '' };
+    }
+  }
+
+  function liveMoment() {
+    const n = amsterdamNow();
+    const day = FESTIVAL_DATES[n.date];
+    return day && presentDays.includes(day) ? { day, mins: n.mins } : null;
+  }
+
+  const inMins = (d) => (d <= 0 ? 'now' : d < 60 ? `in ${d} min` : `in ${Math.floor(d / 60)}h ${String(d % 60).padStart(2, '0')}`);
+
+  function renderNowView() {
+    const now = amsterdamNow();
+    const live = liveMoment();
+
+    if (!live) {
+      // Not a festival night: real clock, countdown or wrap-up, plus a peek at the first pick.
+      const start = Date.UTC(2026, 9, 22), today = now.today ? Date.parse(now.today + 'T00:00:00Z') : NaN;
+      const daysTo = Math.round((start - today) / 86400000);
+      const firstPick = presentDays.map((d) => pickedEntriesForDay(d).filter((e) => !isBackup(e)).sort((a, b) => a.mins - b.mins)[0]).find(Boolean);
+      const msg = isNaN(daysTo) ? 'Couldn\u2019t read the current time.'
+        : daysTo > 1 ? `Left of the Dial starts Thursday 22 October \u2014 ${daysTo} days to go.`
+        : daysTo === 1 ? 'Left of the Dial starts tomorrow.'
+        : daysTo === 0 ? 'Left of the Dial starts today \u2014 your running order appears here once the first night begins.'
+        : 'That\u2019s a wrap for Left of the Dial 2026.';
+      return `<div class="now-view">
+        <div class="now-clock">
+          <div><div class="now-time">${now.clock || '--:--'}</div><div class="now-day">Rotterdam time</div></div>
+          <span class="now-badge preview">${daysTo < 0 ? 'Finished' : 'Not started'}</span>
+        </div>
+        <div class="now-section"><p class="now-empty">${msg}${daysTo >= 0 ? ' On festival nights this tab shows what\u2019s on now, what\u2019s next for you, and what\u2019s starting soon.' : ''}</p></div>
+        ${daysTo >= 0 && firstPick ? `<div class="now-section"><h3>Your first pick</h3>
+          <div class="now-mini"><span class="t">${firstPick.time}</span>
+            <div><div class="n">${picks[firstPick.actIdx] === 'must' ? '\u2605 ' : ''}${escapeHtml(firstPick.name)}</div>
+            <div class="m">${firstPick.day} \u00b7 ${escapeHtml(venueDisplayName(firstPick.venue, firstPick.venueInfo))}</div></div><span></span></div></div>` : ''}
+      </div>`;
+    }
+
+    const { day, mins } = live;
+    const dayPicks = pickedEntriesForDay(day).sort((a, b) => a.mins - b.mins);
+    const planA = dayPicks.filter((e) => !isBackup(e));
+    const playing = dayPicks.filter((e) => e.mins <= mins && mins < e.mins + SET_MINUTES);
+    const upcoming = planA.filter((e) => e.mins > mins && !playing.includes(e));
+
+    const clock = `
+      <div class="now-clock">
+        <div><div class="now-time">${now.clock}</div><div class="now-day">${day}</div></div>
+        <span class="now-badge live"><span class="live-dot"></span>Live</span>
+      </div>`;
+
+    if (!dayPicks.length) {
+      return `<div class="now-view">${clock}
+        <div class="now-section"><p class="now-empty">No picks on ${day}. Star a few acts and this turns into your running order \u2014 what\u2019s on and what\u2019s next.</p></div>
+        ${soonHTML(day, mins)}</div>`;
+    }
+
+    const playingHTML = playing.length
+      ? playing.map((e) => {
+          const pct = Math.min(100, Math.round((mins - e.mins) / SET_MINUTES * 100));
+          const left = e.mins + SET_MINUTES - mins;
+          return `<div class="now-card${picks[e.actIdx] === 'must' ? ' must' : ''}">
+            <div class="nc-top"><span class="nc-name">${escapeHtml(e.name)}${isBackup(e) ? ' <span class="plan-b-tag">Plan B</span>' : ''}</span><span class="nc-when">${left} min left</span></div>
+            <div class="nc-meta">${escapeHtml(venueDisplayName(e.venue, e.venueInfo))} \u00b7 ends ${fmtMins(e.mins + SET_MINUTES)}</div>
+            <div class="nc-progress"><span style="width:${pct}%"></span></div>
+          </div>`;
+        }).join('')
+      : '<p class="now-empty">None of your picks are on right now.</p>';
+
+    let nextHTML;
+    if (!upcoming.length) {
+      nextHTML = `<p class="now-empty">${playing.length ? 'This is your last pick of the night.' : `That\u2019s all your picks for ${day}.`}</p>`;
+    } else {
+      const [first, ...rest] = upcoming;
+      const planB = dayPicks.filter((b) => isBackup(b) && Math.abs(b.mins - first.mins) < SET_MINUTES);
+      const clash = findClash(first, dayPicks);
+      nextHTML = `
+        <div class="now-card big">
+          <div class="nc-top"><span class="nc-name">${picks[first.actIdx] === 'must' ? '\u2605 ' : ''}${escapeHtml(first.name)}</span><span class="nc-when">${inMins(first.mins - mins)}</span></div>
+          <div class="nc-meta">${first.time} \u00b7 ${escapeHtml(venueDisplayName(first.venue, first.venueInfo))}${first.venueInfo ? ` (#${first.venueInfo.order})` : ''}${first.fansOf ? `<br>For fans of ${escapeHtml(first.fansOf)}` : ''}</div>
+          ${planB.length ? `<div class="nc-planb">Plan B: ${planB.map((b) => `${escapeHtml(b.name)} at ${escapeHtml(venueDisplayName(b.venue, b.venueInfo))} (${b.time})`).join(', ')}</div>` : ''}
+          ${clash ? `<div class="nc-planb" style="color:var(--danger)">Clashes with ${escapeHtml(clash.name)} \u2014 pick plan A in the Clash Finder.</div>` : ''}
+        </div>
+        ${rest.slice(0, 5).map((e) => `
+          <div class="now-mini">
+            <span class="t">${e.time}</span>
+            <div><div class="n">${picks[e.actIdx] === 'must' ? '\u2605 ' : ''}${escapeHtml(e.name)}</div>
+            <div class="m">${escapeHtml(venueDisplayName(e.venue, e.venueInfo))} \u00b7 ${inMins(e.mins - mins)}</div></div>
+            <span></span>
+          </div>`).join('')}`;
+    }
+
+    return `<div class="now-view">${clock}
+      <div class="now-section"><h3>On now</h3>${playingHTML}</div>
+      <div class="now-section"><h3>Up next for you</h3>${nextHTML}</div>
+      ${soonHTML(day, mins)}
+    </div>`;
+  }
+
+  // Unpicked sets starting in the next 45 minutes \u2014 for filling a gap
+  // without opening the full schedule.
+  function soonHTML(day, mins) {
+    const soon = entries
+      .filter((e) => e.day === day && !picks[e.actIdx] && e.mins >= mins - 5 && e.mins <= mins + 45)
+      .sort((a, b) => a.mins - b.mins)
+      .slice(0, 8);
+    if (!soon.length) return '';
+    return `<div class="now-section"><h3>Starting soon, not in your picks</h3>
+      ${soon.map((e) => `
+        <div class="now-mini">
+          <span class="t">${e.time}</span>
+          <div><div class="n">${escapeHtml(e.name)}</div>
+          <div class="m">${escapeHtml(venueDisplayName(e.venue, e.venueInfo))}${e.genre ? ` \u00b7 ${escapeHtml(e.genre)}` : ''}</div></div>
+          <button class="now-star" data-actidx="${e.actIdx}" aria-label="Add ${escapeHtml(e.name)} to picks">\u2606</button>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  const MAIN_TABS = [
+    { view: 'now', label: 'Now', short: 'Now' },
+    { view: 'day', label: 'Schedule', short: 'Schedule' },
+    { view: 'picks', label: 'My Picks', short: 'Picks' },
+    { view: 'clash', label: 'Clash Finder', short: 'Clashes' },
+    { view: 'venues', label: 'Map & Venues', short: 'Map' }
+  ];
+
+  function renderMainTabs() {
+    const starredCount = Object.keys(picks).length;
+    const isLive = !!liveMoment();
+    mainTabs.innerHTML = MAIN_TABS.map(({ view, label, short }) => {
+      const isActive = state.view === view;
+      const countBadge = view === 'picks' ? ` <span class="n">${starredCount}</span>` : '';
+      const dot = view === 'now' && isLive ? '<span class="live-dot"></span>' : '';
+      return `<button class="main-tab${isActive ? ' active' : ''}" data-view="${view}">${dot}<span class="lbl-long">${label}</span><span class="lbl-short">${short}</span>${countBadge}</button>`;
+    }).join('');
+  }
+
+  function renderDayNav() {
+    dayNav.innerHTML = presentDays.map((d) => {
+      const isActive = state.view === 'day' && state.day === d;
+      const count = entries.filter((e) => e.day === d).length;
+      return `
+        <button class="day-btn${isActive ? ' active' : ''}" data-day="${d}">
+          <span class="day-dot" style="background:${DAY_COLOR[d]}"></span>${d} <span class="count">${count}</span>
+        </button>`;
+    }).join('');
+  }
+
+  function render() {
+    renderMainTabs();
+    renderDayNav();
+
+    const showDayChrome = state.view === 'day';
+    dayNav.style.display = showDayChrome ? '' : 'none';
+    filterBar.style.display = showDayChrome ? '' : 'none';
+
+    const starredCount = Object.keys(picks).length;
+    const isTimetable = state.view === 'day' && state.layout === 'grid';
+    document.querySelector('.wrap').classList.toggle('wide', isTimetable);
+    layoutToggle.querySelectorAll('button').forEach((b) => {
+      const on = b.dataset.layout === state.layout;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+
+    // Keep the timetable's scroll position when re-rendering the same day
+    // (starring, typing in search), so the grid never jumps back to the top.
+    const prevClashScroll = state.view === 'clash'
+      ? [...list.querySelectorAll('.clash-timeline-wrap')].map((w) => w.scrollLeft)
+      : null;
+    const prevScroll = list.querySelector('.tt-scroll');
+    const keepScroll = prevScroll && prevScroll.dataset.day === state.day
+      ? { left: prevScroll.scrollLeft, top: prevScroll.scrollTop }
+      : null;
+
+    let html = '';
+
+    if (state.view === 'now') {
+      html = renderNowView();
+    } else if (state.view === 'venues') {
+      html = renderVenuesView(state.selectedVenue);
+    } else if (state.view === 'clash') {
+      html = renderClashView();
+    } else if (state.view === 'share') {
+      html = renderShareView(picks);
+    } else if (state.view === 'picks') {
+      if (starredCount === 0) {
+        html = '<div class="empty">No picks yet.<br>Browse a day and tap the star on anything you don\'t want to miss.</div>';
+      } else {
+        presentDays.forEach((d) => {
+          const dayPicks = pickedEntriesForDay(d);
+          if (!dayPicks.length) return;
+          dayPicks.sort((a, b) => a.mins - b.mins);
+          html += `<div class="day-heading">${d}</div>`;
+          dayPicks.forEach((e) => {
+            const clash = findClash(e, dayPicks);
+            html += rowHTML(e, clash, { picks, state, showCountByAct });
+          });
+        });
+      }
+    } else if (isTimetable) {
+      html = buildTimetable(state.day);
+    } else {
+      const dayEntries = entries.filter((e) => e.day === state.day).filter(matchesFilter);
+      dayEntries.sort((a, b) => a.mins - b.mins);
+      const dayPicksForClash = pickedEntriesForDay(state.day);
+      if (!dayEntries.length) {
+        html = `<div class="empty">Nothing matches that search on ${state.day}.</div>`;
+      } else {
+        dayEntries.forEach((e) => {
+          const clash = isEntryPicked(e) ? findClash(e, dayPicksForClash) : null;
+          html += rowHTML(e, clash, { picks, state, showCountByAct });
+        });
+      }
+    }
+
+    list.innerHTML = html;
+
+    if (prevClashScroll) {
+      list.querySelectorAll('.clash-timeline-wrap').forEach((w, i) => { if (prevClashScroll[i]) w.scrollLeft = prevClashScroll[i]; });
+    }
+    if (isTimetable && keepScroll) {
+      const sc = list.querySelector('.tt-scroll');
+      if (sc) { sc.scrollLeft = keepScroll.left; sc.scrollTop = keepScroll.top; }
+    }
+    if (isTimetable && state.ttSelected && !clashPopover.hidden) {
+      const entry = entries.find((e) => e.id === state.ttSelected);
+      if (entry) clashPopover.innerHTML = timetablePopoverHTML(entry);
+    }
+  }
+
+  /* ============================================================
+     6. EVENT HANDLERS
+     ============================================================ */
+
+  // --- DOM refs (queried once, not on every render) ---
+  const mainTabs = document.getElementById('mainTabs');
+  const dayNav = document.getElementById('dayNav');
+  const filterBar = document.getElementById('filterBar');
+  const list = document.getElementById('list');
+  const genreSel = document.getElementById('genreFilter');
+  const layoutToggle = document.getElementById('layoutToggle');
+  const shareBtn = document.getElementById('shareBtn');
+  const printBtn = document.getElementById('printBtn');
+  const searchInput = document.getElementById('search');
+  const resetBtn = document.getElementById('resetBtn');
+
+  genres.forEach((g) => {
+    const opt = document.createElement('option');
+    opt.value = g;
+    opt.textContent = g;
+    genreSel.appendChild(opt);
+  });
+
+  function scrollVenueDetailIntoView() {
+    const el = document.getElementById('venueDetail');
+    if (el && typeof el.scrollIntoView === 'function') {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  // Clash finder popover: floats right next to the tapped block instead of
+  // a panel pinned to the top of the view, so checking several blocks on
+  // the same day never requires scrolling back and forth.
+  const clashPopover = document.getElementById('clashPopover');
+
+  function hideClashPopover() {
+    clashPopover.hidden = true;
+    clashPopover.innerHTML = '';
+    document.querySelectorAll('.clash-block.selected, .tt-block.selected').forEach((b) => b.classList.remove('selected'));
+    state.ttSelected = null;
+  }
+
+  function showTimetablePopover(blockEl) {
+    const entry = entries.find((e) => e.id === blockEl.dataset.id);
+    if (!entry) return;
+    document.querySelectorAll('.tt-block.selected').forEach((b) => b.classList.remove('selected'));
+    blockEl.classList.add('selected');
+    state.ttSelected = entry.id;
+    clashPopover.innerHTML = timetablePopoverHTML(entry);
+    clashPopover.hidden = false;
+  }
+
+  function showClashPopover(blockEl) {
+    const entry = entries.find((e) => e.id === blockEl.dataset.id);
+    if (!entry) return;
+
+    document.querySelectorAll('.clash-block.selected').forEach((b) => b.classList.remove('selected'));
+    blockEl.classList.add('selected');
+
+    clashPopover.innerHTML = clashPopoverContentHTML(entry);
+    clashPopover.hidden = false;
+  }
+
+  clashPopover.addEventListener('click', (e) => {
+    if (e.target.closest('.clash-popover-close')) {
+      hideClashPopover();
+      return;
+    }
+    const resolveBtn = e.target.closest('.resolve-btn[data-resolve]');
+    if (resolveBtn) {
+      if (resolveBtn.dataset.resolve === 'backup') setBackup(resolveBtn.dataset.id);
+      else setPrimary(resolveBtn.dataset.id);
+      const openId = state.ttSelected || (document.querySelector('.clash-block.selected') || {}).dataset?.id;
+      render();
+      const entry = entries.find((x) => x.id === openId);
+      if (entry) {
+        clashPopover.innerHTML = state.ttSelected ? timetablePopoverHTML(entry) : clashPopoverContentHTML(entry);
+        const blk = document.querySelector(`.clash-block[data-id="${openId}"]`);
+        if (blk) blk.classList.add('selected');
+      }
+      return;
+    }
+    const priBtn = e.target.closest('.tp-btn[data-pri]');
+    if (priBtn) {
+      picks[priBtn.dataset.actidx] = priBtn.dataset.pri;
+      savePicks(picks);
+      render();
+      return;
+    }
+    const ttRemove = e.target.closest('.tp-remove');
+    if (ttRemove) {
+      removePick(ttRemove.dataset.actidx);
+      render();
+      return;
+    }
+    const removeBtn = e.target.closest('.cd-remove-btn');
+    if (removeBtn) {
+      if (confirm('Remove this artist from your picks (all their shows)?')) {
+        removePick(removeBtn.dataset.actidx);
+        hideClashPopover();
+        render();
+      }
+    }
+  });
+
+  // Close on any click outside the popover and its trigger blocks. It's
+  // anchored to a fixed spot on screen (not positioned relative to the
+  // clicked block), so it stays visible and correctly placed even while
+  // scrolling — no drift, no repositioning math to get wrong.
+  document.addEventListener('click', (e) => {
+    if (clashPopover.hidden) return;
+    // A button that re-rendered the popover is no longer in the document by
+    // the time this runs — that click came from inside, so keep it open.
+    if (!document.contains(e.target)) return;
+    if (e.target.closest('.clash-popover') || e.target.closest('.clash-block') || e.target.closest('.tt-block')) return;
+    hideClashPopover();
+  });
+
+  function attemptCopy(text, btn) {
+    const done = (ok) => {
+      btn.textContent = ok ? 'Copied!' : 'Select & copy';
+      setTimeout(() => { btn.textContent = 'Copy'; }, 1600);
+    };
+    const fallback = () => {
+      try { done(document.execCommand('copy')); } catch (e) { done(false); }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => done(true)).catch(fallback);
+    } else {
+      fallback();
+    }
+  }
+
+  async function handlePrintClick() {
+    const doc = buildPrintDoc({ picks, presentDays, pickedEntriesForDay });
+    let downloads = null;
+    try { downloads = await window.claude.use('downloads'); } catch (e) { downloads = null; }
+
+    if (downloads) {
+      try {
+        await downloads.save({ filename: 'lotd-2026-my-picks.html', data: doc });
+        return;
+      } catch (e) {
+        if (e && e.code === 'declined') return;
+        // fall through to the window.open fallback below
+      }
+    }
+
+    // Fallback for contexts without the downloads capability: open the
+    // printable page in a new tab so the browser's own print dialog works.
+    const win = window.open('', '_blank');
+    if (win) {
+      win.document.write(doc);
+      win.document.close();
+    } else {
+      alert('Could not open the printable page. Please allow pop-ups and try again.');
+    }
+  }
+
+  // --- Static toolbar controls (bound once; these elements are never recreated) ---
+  mainTabs.addEventListener('click', (e) => {
+    const btn = e.target.closest('.main-tab');
+    if (!btn) return;
+    state.view = btn.dataset.view;
+    if (state.view !== 'venues') state.selectedVenue = null;
+    hideClashPopover();
+    render();
+  });
+
+  dayNav.addEventListener('click', (e) => {
+    const btn = e.target.closest('.day-btn');
+    if (!btn) return;
+    state.view = 'day';
+    state.day = btn.dataset.day;
+    hideClashPopover();
+    render();
+  });
+
+  layoutToggle.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-layout]');
+    if (!btn || btn.dataset.layout === state.layout) return;
+    state.layout = btn.dataset.layout;
+    try { localStorage.setItem(LAYOUT_KEY, state.layout); } catch (err) { /* not persisted */ }
+    hideClashPopover();
+    render();
+  });
+
+  list.addEventListener('keydown', (e) => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('tt-block')) {
+      e.preventDefault();
+      showTimetablePopover(e.target);
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !clashPopover.hidden) hideClashPopover();
+  });
+
+  shareBtn.addEventListener('click', () => {
+    state.view = state.view === 'share' ? 'day' : 'share';
+    render();
+  });
+  printBtn.addEventListener('click', handlePrintClick);
+
+  searchInput.addEventListener('input', (e) => {
+    state.query = e.target.value.toLowerCase();
+    render();
+  });
+  genreSel.addEventListener('change', (e) => {
+    state.genre = e.target.value;
+    render();
+  });
+  resetBtn.addEventListener('click', () => {
+    if (!confirm('Clear all starred acts?')) return;
+    picks = {};
+    backups = {};
+    savePicks(picks);
+    saveBackups();
+    render();
+  });
+
+  // --- Delegated handler for the dynamic list container ---
+  // One listener handles every row, star button, clash-finder block, and
+  // share-copy button, regardless of how many times render() has redrawn
+  // the DOM underneath it — no per-element listeners to re-bind.
+  list.addEventListener('click', (e) => {
+    const copyBtn = e.target.closest('.share-copy-btn');
+    if (copyBtn) {
+      const input = document.getElementById(copyBtn.dataset.target);
+      input.focus();
+      input.select();
+      input.setSelectionRange(0, 99999);
+      attemptCopy(input.value, copyBtn);
+      return;
+    }
+
+    const ttBlock = e.target.closest('.tt-block');
+    if (ttBlock) {
+      showTimetablePopover(ttBlock);
+      return;
+    }
+
+    const clashBlock = e.target.closest('.clash-block');
+    if (clashBlock) {
+      showClashPopover(clashBlock);
+      return;
+    }
+
+    const venueNode = e.target.closest('.venue-node');
+    if (venueNode) {
+      state.selectedVenue = venueNode.dataset.key;
+      render();
+      scrollVenueDetailIntoView();
+      return;
+    }
+
+    const venueTableRow = e.target.closest('.venue-table-row');
+    if (venueTableRow) {
+      state.selectedVenue = venueTableRow.dataset.key;
+      render();
+      scrollVenueDetailIntoView();
+      return;
+    }
+
+    const resolveBtn = e.target.closest('.resolve-btn[data-resolve]');
+    if (resolveBtn) {
+      if (resolveBtn.dataset.resolve === 'backup') setBackup(resolveBtn.dataset.id);
+      else setPrimary(resolveBtn.dataset.id);
+      render();
+      return;
+    }
+
+    const nowStar = e.target.closest('.now-star');
+    if (nowStar) {
+      picks[nowStar.dataset.actidx] = 'want';
+      savePicks(picks);
+      render();
+      return;
+    }
+
+    const removePickBtn = e.target.closest('.remove-pick-btn');
+    if (removePickBtn) {
+      removePick(removePickBtn.dataset.actidx);
+      render();
+      return;
+    }
+
+    const starBtn = e.target.closest('.star-btn');
+    if (starBtn) {
+      const actIdx = starBtn.closest('.row').dataset.actidx;
+      const next = cyclePriority(picks[actIdx] || null);
+      picks[actIdx] = next;
+      savePicks(picks);
+      render();
+      return;
+    }
+
+    const row = e.target.closest('.row');
+    if (row) {
+      const id = row.dataset.id;
+      state.open[id] = !state.open[id];
+      render();
+    }
+  });
+
+
+  // During the festival, open straight on Now/Next and keep it ticking.
+  if (liveMoment() && !sharedPicks) state.view = 'now';
+  setInterval(() => {
+    if (state.view === 'now') render();
+  }, 30000);
+
+  render();
+})();
+</script>
+</body>
+</html>
